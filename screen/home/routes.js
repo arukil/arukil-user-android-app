@@ -12,6 +12,7 @@ import Account from './account/component/index';
 
 import ProductList from './order/common/component/productList';
 import Search from './order/common/component/search';
+import Vegetable from './order/component/vegetable';
 
 
 
@@ -84,7 +85,6 @@ function StackNavigator() {
 
             <Stack.Navigator screenOptions={{
                 headerShown: true,
-                headerTransparent: true,
 
             }}>
 
@@ -94,12 +94,18 @@ function StackNavigator() {
                 }}
                 />
 
+
+                <Stack.Screen name="Vegetable" component={Vegetable} options={{
+                    headerShown: true,
+                }}
+                />
+
                 <Stack.Screen name="ProductList" component={ProductList} options={{
                     headerTransparent: false,
-                    headerTitleStyle:{
-                        fontSize:16,
-                        fontWeight:'700',
-                        color:'#5e5b54'
+                    headerTitleStyle: {
+                        fontSize: 16,
+                        fontWeight: '700',
+                        color: '#5e5b54'
                     },
                     headerStyle: {
                         elevation: 0,
@@ -108,7 +114,7 @@ function StackNavigator() {
                 />
 
                 <Stack.Screen name="Search" component={Search} options={{
-                     headerShown: false,
+                    headerShown: false,
                 }}
                 />
 

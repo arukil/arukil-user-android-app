@@ -4,7 +4,6 @@ import {
     Text, Image, TouchableOpacity, ActivityIndicator,
     ScrollView, Picker
 } from 'react-native';
-import faker from 'faker';
 import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
 import Counter from "react-native-counters";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,7 +12,7 @@ import { Button, Overlay } from 'react-native-elements';
 import axios from 'axios'
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height / 5;
+const SCREEN_HEIGHT = Dimensions.get('window').height / 5.5;
 const selectedColor = '#e91e63';
 const unSelectedColor = '#999';
 
@@ -63,7 +62,7 @@ class Product extends Component {
         let data = await this._generateDataList();
         this.setState({
             list: dataProvider.cloneWithRows(data),
-        },this._layoutHandler());
+        }, this._layoutHandler());
     }
 
     async _generateDataList() {
@@ -110,7 +109,7 @@ class Product extends Component {
                         <MaterialCommunityIcons name='chevron-down' color={'#999'} />
                     </TouchableOpacity>
 
-                    <View style={styles.subdiv}>  
+                    <View style={styles.subdiv}>
                         <Text style={styles.price}>
                             <MaterialCommunityIcons name='currency-inr' size={15} color={'#000'} />
                             {price}
@@ -123,7 +122,6 @@ class Product extends Component {
 
         )
     }
-
 
 
 
@@ -150,9 +148,18 @@ class Product extends Component {
                 <Overlay isVisible={this.state.overlay} onBackdropPress={() => this.setState({ overlay: false })}>
                     <Text>Hello from Overlay!</Text>
                 </Overlay>
+
+                <View style={styles.cart}>
+                    <View style={styles.leftcart}>
+                        <Text style={{ color: '#fff' }}>3 item. 10 Kg. <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />566</Text>
+                    </View>
+                    <TouchableOpacity style={styles.rightcart}>
+                        <Text style={{ color: '#fff', fontSize: 16 }}>View Cart </Text>
+                        <MaterialCommunityIcons name='chevron-right' size={18} color={'#fff'} />
+                    </TouchableOpacity>
+                </View>
+
             </View>
-
-
         );
     }
 }
@@ -185,26 +192,27 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
+
     },
     listView: {
         width: '100%',
         height: '95%',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around',
-        borderBottomWidth: 0.2, borderColor: '#ddd'
+        justifyContent: 'space-between',
+        borderBottomWidth: 0.2, borderColor: '#ddd',
     },
     listContent: {
-        width: '60%',
+        width: '65%',
         height: '80%',
         justifyContent: 'space-between',
     },
     image: {
         width: '25%',
-        height: '70%',
+        height: '75%',
     },
     listname: {
-        width: '95%',
+        width: '90%',
         fontSize: 14,
         fontWeight: '600',
         color: '#333'
@@ -213,12 +221,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '90%',
+        width: '70%',
         padding: 4,
         borderWidth: 0.25,
         borderRadius: 5,
     },
     subdiv: {
+        width: '95%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
@@ -237,6 +246,18 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 20,
         borderColor: '#ddd'
+    },
+    cart: {
+        padding: 15,
+        backgroundColor: '#e91e63',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    rightcart: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
     }
 
 

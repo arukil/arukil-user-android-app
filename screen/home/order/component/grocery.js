@@ -5,6 +5,7 @@ import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
 import Swiper from 'react-native-swiper'
+import { ForceTouchGestureHandler } from 'react-native-gesture-handler';
 
 
 const SCREEN_WIDTH = (Dimensions.get('window').width - 20) / 3;
@@ -34,11 +35,11 @@ class Market extends Component {
             switch (type) {
                 case 'NORMAL':
                     dim.width = SCREEN_WIDTH,
-                    dim.height = SCREEN_HEIGHT;
+                        dim.height = SCREEN_HEIGHT;
                     break;
                 case 'OFFERCARD':
                     dim.width = Dimensions.get('window').width,
-                    dim.height = 160
+                        dim.height = 160
                     break;
                 default:
                     dim.width = 0;
@@ -81,17 +82,22 @@ class Market extends Component {
         const { id } = data.item;
         return (
             id === 0 ?
-                //  <Swiper showsButtons={true} showsButtons={false} activeDotColor={'#e91e63'} autoplay={false} showsPagination={true}
-                //  autoplayTimeout={3} dotStyle={{ width: 5, height: 5 }} activeDotStyle={{ width: 5, height: 5 }}>
+                <Swiper showsButtons={true} showsButtons={false} activeDotColor={'#e91e63'} autoplay={true} showsPagination={true}
+                    autoplayTimeout={3} dotStyle={{ width: 5, height: 5 }} activeDotStyle={{ width: 5, height: 5 }}>
 
-                <TouchableOpacity style={{ width: '100%', height: '100%' }}>
-                    <Image source={require('../../../assets/image/1228.jpg')}
-                        style={{ width: '100%', height: '95%' }}>
-                    </Image>
-                </TouchableOpacity>
-                // </Swiper>
+                    <TouchableOpacity style={{ width: '100%', height: '100%' }}>
+                        <Image source={require('../../../assets/image/1228.jpg')}
+                            style={{ width: '100%', height: '95%' }}>
+                        </Image>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ width: '100%', height: '100%' }}>
+                        <Image source={require('../../../assets/image/1228.jpg')}
+                            style={{ width: '100%', height: '95%' }}>
+                        </Image>
+                    </TouchableOpacity>
+                </Swiper>
                 :
-                <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={()=>this.props.nav.navigate('ProductList')}>
+                <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() => this.props.navigation.navigate('ProductList')}>
                     <View style={styles.innerCard}>
                         <Image source={{ uri: Faker.image.food() }} style={styles.productListImage} />
                         <Text style={styles.productListName} numberOfLines={2} >{data.item.name} </Text>
@@ -102,9 +108,10 @@ class Market extends Component {
 
     render() {
         return (
-            !this.state.isLoading ?
+            <View style={styles.container}>
+               { !this.state.isLoading ?
                 <RecyclerListView
-                    style={styles.container}
+                    style={{flex:1}}
                     rowRenderer={this.rowRenderer}
                     dataProvider={this.state.list}
                     layoutProvider={this.layoutProvider}
@@ -116,6 +123,8 @@ class Market extends Component {
                 <View style={styles.loading}>
                     <ActivityIndicator size="large" color="#e91e63" />
                 </View>
+              }
+            </View>
 
         );
     }
@@ -129,14 +138,11 @@ export default Market;
 const styles = StyleSheet.create({
 
     container: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#fcfcfc',
-
+        flex:1
     },
-    loading:{
-        flex:1,
-       justifyContent:'center'
+    loading: {
+        flex: 1,
+        justifyContent: 'center'
     },
     card: {
         width: '100%',

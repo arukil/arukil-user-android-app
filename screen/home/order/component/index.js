@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, TouchableOpacity, StatusBar ,PermissionsAndroid} from 'react-native'
+import { Text, View, TouchableOpacity, SafeAreaView, PermissionsAndroid } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GoogleApiKey from '../../../config';
 import Geolocation from 'react-native-geolocation-service';
@@ -9,7 +9,6 @@ import styles from '../style/index';
 import { connect } from 'react-redux'
 import Modal from 'react-native-modal';
 import Region from '../region/component/Location'
-import { ScrollView } from 'react-native-gesture-handler';
 
 function Index(props) {
 
@@ -24,6 +23,7 @@ function Index(props) {
         longitude: 0,
     });
     const [modalVisible, setModalVisible] = React.useState(false);
+
 
     React.useEffect(() => {
         if (Object.keys(props.data).length !== 0) {
@@ -53,9 +53,8 @@ function Index(props) {
     }
 
 
-    const getLocation=async()=>{
-        const chckLocationPermission =await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (chckLocationPermission){
+
+    const geolocationHandler = () => {
         Geolocation.getCurrentPosition(pos => {
             const coords = {
                 latitude: pos.coords.latitude,
@@ -72,9 +71,17 @@ function Index(props) {
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
+    }
+
+
+
+    const getLocation = async () => {
+        const chckLocationPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if (chckLocationPermission) {
+            return geolocationHandler();
         }
-        else{
-            const granted =await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        else {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                 {
                     'title': ' Arukil App required Location permission',
                     'message': 'We required Location permission in order to get device location ' +
@@ -82,7 +89,7 @@ function Index(props) {
                 }
             )
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                alert("You've access for the location");
+                return geolocationHandler();
             } else {
                 alert("You don't have access for the location");
             }
@@ -90,9 +97,7 @@ function Index(props) {
     }
 
     React.useEffect(() => {
-        
-         getLocation();
-        
+        getLocation();
     }, []);
 
     const modalPopup = <Modal isVisible={modalVisible} onBackButtonPress={() => setModalVisible(false)}
@@ -104,33 +109,26 @@ function Index(props) {
 
     return (
 
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.location} onPress={() => setModalVisible(true)}>
-                        <MaterialCommunityIcons name='map-marker' color={'#e91e63'} size={30} />
-                        <View style={styles.locationTextContainer}>
-                            <Text style={styles.primaryLocationText} numberOfLines={1}>{location.shortname}</Text>
-                            <Text style={styles.SecondaryLocationText} numberOfLines={1}>{location.longname}</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.offer} >
-                        <MaterialCommunityIcons name='sale' color={'green'} size={20} />
-                        <Text style={styles.offerText}>Offer</Text>
-                    </TouchableOpacity>
-            </View>
-            
-            <View style={styles.body}>
-                <TouchableOpacity style={styles.searchBar} activeOpacity={0.7} onPress={() => props.navigation.navigate('Search')}>
-                    <MaterialCommunityIcons name='magnify' size={18} />
-                    <Text style={styles.searchBarText}>Search...</Text>
+                <TouchableOpacity activeOpacity={0.7} style={styles.location} onPress={() => setModalVisible(true)}>
+                    <MaterialCommunityIcons name='map-marker' color={'#e91e63'} size={30} />
+                    <View style={styles.locationTextContainer}>
+                        <Text style={styles.primaryLocationText} numberOfLines={1}>{location.shortname}</Text>
+                        <Text style={styles.SecondaryLocationText} numberOfLines={1}>{location.longname}</Text>
+                    </View>
                 </TouchableOpacity>
-                <View style={styles.listView}>
-                    <TopBar nav={props.navigation} />
-                </View>
+                <TouchableOpacity activeOpacity={0.7} style={styles.search} >
+                    <MaterialCommunityIcons name='magnify' color={'#999'} size={25} />
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.body}>
+                <TopBar navigation={props.navigation} />
             </View>
             {modalVisible ? modalPopup : null}
 
-        </View>
+        </SafeAreaView>
     )
 }
 

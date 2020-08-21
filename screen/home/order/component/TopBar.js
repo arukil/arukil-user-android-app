@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Grocery from './grocery';
 import Vegetable from './vegetable';
 import Bakery from './bakery';
@@ -17,10 +18,10 @@ export default function TopBar(props) {
     const selectionHandler = () => {
 
         if (section === 'Grocery') {
-            return <Grocery nav={props.nav} />
+            return <Grocery navigation={props.navigation} />
         }
         else if (section === 'Vegetable') {
-            return <Vegetable />
+            return <Vegetable/>
         }
         else if (section === 'Bakery') {
             return <Bakery />
@@ -47,7 +48,9 @@ export default function TopBar(props) {
             <View style={styles.header}>
                 <ScrollView horizontal={true} style={styles.scrollView}>{TopBar}</ScrollView>
             </View>
-            <View style={styles.body}>{selectionHandler()}</View>
+            <View style={styles.body}>
+                {selectionHandler()}
+           </View>
         </View>
     )
 }

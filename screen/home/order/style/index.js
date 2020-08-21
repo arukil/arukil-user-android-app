@@ -7,19 +7,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
     },
     header: {
-        padding:8,
-        paddingHorizontal:15,
-        flexDirection:'row',
-        alignItems:'center',
-        justifyContent:'space-between',
+        width: '100%',
+        height: 55,
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         backgroundColor: '#ffffff',
         borderBottomWidth: 1.5,
-        borderColor:'#f5f5f5'
+        borderColor: '#f5f5f5',
     },
     location: {
+        marginLeft: 15,
         width: '65%',
         flexDirection: 'row',
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'center',
     },
     locationTextContainer: {
@@ -30,45 +31,29 @@ const styles = StyleSheet.create({
     },
     SecondaryLocationText: {
         color: '#999',
-        fontSize: 12,  
+        fontSize: 12,
     },
-    offer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center'
+    search: {
+        padding: 10,
+        paddingRight: 15,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
+        elevation:1
     },
-    offerText: {
-        fontWeight: '600',
-    },
+
     body: {
         flex: 1,
-        paddingHorizontal:10,
+        paddingHorizontal: 10,
     },
-    searchBar: {
-        marginTop: 8,
-        borderWidth: 0.35,
-        padding: 10,
-        borderColor: '#999',
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderRadius: 5,
-    },
-    searchBarText: {
-        color: '#999',
-        fontSize: 16,
-        paddingLeft: 10,
-    },
-    listView: {
-        flex: 1,
-    },
+
     bottomModal: {
         justifyContent: 'flex-end',
         margin: 0,
     },
     modal: {
-        flex:1,
+        flex: 1,
         backgroundColor: '#fff',
-        borderColor: 'rgba(0, 0, 0, 0.1)',       
+        borderColor: 'rgba(0, 0, 0, 0.1)',
     },
 })
 

@@ -16,11 +16,11 @@ const styles = StyleSheet.create({
         marginTop:5
     },
     topBar:{
-        paddingTop:12,
+        paddingTop:14,
         paddingRight:width,
-        paddingBottom:10
+        paddingBottom:10,
+
     },
-   
 })
 
 
