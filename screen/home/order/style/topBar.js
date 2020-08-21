@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
-        alignItems:'center',
         marginTop:5
     },
     topBar:{

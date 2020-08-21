@@ -1,6 +1,5 @@
 import React from 'react'
-import { Text, View, TouchableOpacity, StatusBar } from 'react-native'
-import { Header } from 'react-native-elements'
+import { Text, View, TouchableOpacity, StatusBar ,PermissionsAndroid} from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GoogleApiKey from '../../../config';
 import Geolocation from 'react-native-geolocation-service';
@@ -53,7 +52,10 @@ function Index(props) {
             .catch(error => console.log(error));
     }
 
-    React.useEffect(() => {
+
+    const getLocation=async()=>{
+        const chckLocationPermission =await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        if (chckLocationPermission){
         Geolocation.getCurrentPosition(pos => {
             const coords = {
                 latitude: pos.coords.latitude,
@@ -70,6 +72,27 @@ function Index(props) {
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
         );
+        }
+        else{
+            const granted =await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': ' Arukil App required Location permission',
+                    'message': 'We required Location permission in order to get device location ' +
+                        'Please grant us.'
+                }
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                alert("You've access for the location");
+            } else {
+                alert("You don't have access for the location");
+            }
+        }
+    }
+
+    React.useEffect(() => {
+        
+         getLocation();
+        
     }, []);
 
     const modalPopup = <Modal isVisible={modalVisible} onBackButtonPress={() => setModalVisible(false)}
