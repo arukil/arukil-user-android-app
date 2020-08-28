@@ -1,26 +1,21 @@
 import React, { Component } from 'react';
-import {
-    StyleSheet, View, Dimensions,
-    Text, Image, TouchableOpacity, ActivityIndicator,
-    ScrollView, Picker
-} from 'react-native';
+import {StyleSheet, View, Dimensions,Text, Image, ActivityIndicator,} from 'react-native';
 import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
-import Counter from "react-native-counters";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { connect } from 'react-redux'
-import { Button, Overlay } from 'react-native-elements';
 import axios from 'axios'
+import CartBtn from '../helper/market/cartbtn'
+import Cart from '../helper/market/cart';
+import Quantitycard from '../helper/market/quantitycard';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height / 5.5;
-const selectedColor = '#e91e63';
-const unSelectedColor = '#999';
+const SCREEN_HEIGHT = Dimensions.get('window').height / 6;
+
 
 const dataProvider = new DataProvider((r1, r2) => {
     return r1 !== r2;
 });
 
-class Product extends Component {
+class Vegetable extends Component {
 
     constructor(props) {
         super(props)
@@ -28,15 +23,14 @@ class Product extends Component {
             isLoading: true,
             list: dataProvider.cloneWithRows({}),
             productTypeIndex: 0,
-            counterVisible: true,
-            overlay: false,
-            addBtnVisible: true,
+            ismodelVisible: false,
+            selectedItem: []
         };
         this.layoutProvider = new LayoutProvider();
 
     }
 
-
+ 
     _layoutHandler() {
         this.setState({ isLoading: false })
         this.layoutProvider = new LayoutProvider((i) => {
@@ -67,6 +61,7 @@ class Product extends Component {
 
     async _generateDataList() {
         const Data = [];
+       
         await axios.get('https://arukil.herokuapp.com/api/products/vegetable')
             .then(function (response) {
                 response.data.data.map((item) =>
@@ -85,44 +80,32 @@ class Product extends Component {
             }).catch(function (error) {
                 console.log(error)
             })
-
+      
+            console.log(Data[0])
         return Data;
 
     }
 
-
     rowRenderer = (type, data) => {
-        const { img, name, price, gm } = data.item;
-
-        const addItem = <TouchableOpacity style={styles.addItemButton} activeOpacity={0.7} >
-            <MaterialCommunityIcons name='plus' color={'#e91e63'} />
-            <Text style={{ fontSize: 10, color: '#e91e63' }}>ADD</Text>
-        </TouchableOpacity>
-
+        const { img, name, price, gm, id } = data.item;
         return (
             <View style={styles.listView}>
                 <Image source={{ uri: img }} style={styles.image} />
                 <View style={styles.listContent}>
                     <Text style={styles.listname} numberOfLines={1}>{name}</Text>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.overlayBtn} onPress={() => this.setState({ overlay: true })} >
-                        <Text style={{ color: '#999', fontSize: 12 }}>{gm}</Text>
-                        <MaterialCommunityIcons name='chevron-down' color={'#999'} />
-                    </TouchableOpacity>
-
                     <View style={styles.subdiv}>
-                        <Text style={styles.price}>
-                            <MaterialCommunityIcons name='currency-inr' size={15} color={'#000'} />
-                            {price}
-                        </Text>
-                        <Counter />
+                        <Text style={{ color: '#999' }}>1kg</Text>
+                        <CartBtn data={data.item} selectedItem={this.state.selectedItem} />
                     </View>
-
+                    <Text style={styles.price}>
+                        <MaterialCommunityIcons name='currency-inr' size={15} color={'#000'} />
+                        {price}
+                    </Text>
                 </View>
             </View>
 
         )
     }
-
 
 
     render() {
@@ -145,19 +128,9 @@ class Product extends Component {
                         <ActivityIndicator size="large" color="#e91e63" />
                     </View>
                 }
-                <Overlay isVisible={this.state.overlay} onBackdropPress={() => this.setState({ overlay: false })}>
-                    <Text>Hello from Overlay!</Text>
-                </Overlay>
 
-                <View style={styles.cart}>
-                    <View style={styles.leftcart}>
-                        <Text style={{ color: '#fff' }}>3 item. 10 Kg. <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />566</Text>
-                    </View>
-                    <TouchableOpacity style={styles.rightcart}>
-                        <Text style={{ color: '#fff', fontSize: 16 }}>View Cart </Text>
-                        <MaterialCommunityIcons name='chevron-right' size={18} color={'#fff'} />
-                    </TouchableOpacity>
-                </View>
+                <Cart />
+                <Quantitycard />
 
             </View>
         );
@@ -167,17 +140,8 @@ class Product extends Component {
 
 
 
-const mapStateToProps = state => ({
-    count: state.counter
-})
 
-const mapDispatchToProps = (dispatch) => ({
-    increment: () => { dispatch({ type: 'INCREMENT' }) },
-    decrement: () => { dispatch({ type: 'DECREMENT' }) },
-    reset: () => { dispatch({ type: 'RESET' }) }
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Product)
+export default Vegetable;
 
 
 const styles = StyleSheet.create({
@@ -203,13 +167,13 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.2, borderColor: '#ddd',
     },
     listContent: {
-        width: '65%',
+        width: '70%',
         height: '80%',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
     },
     image: {
-        width: '25%',
-        height: '75%',
+        width: '22%',
+        height: '60%',
     },
     listname: {
         width: '90%',
@@ -241,24 +205,24 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         alignItems: 'center',
         flexDirection: 'row',
-        width: 60,
+        width: 80,
         height: 30,
         borderWidth: 0.5,
-        borderRadius: 20,
-        borderColor: '#ddd'
+        borderRadius: 1,
+        borderColor: '#ddd',
+        backgroundColor: '#ffffff',
+        elevation: 1
     },
-    cart: {
-        padding: 15,
-        backgroundColor: '#e91e63',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    rightcart: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-    }
 
+    bottomModal: {
+        justifyContent: 'flex-end',
+        margin: 0,
+    },
+    modal: {
+        flex: 0.45,
+        backgroundColor: '#fff',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        justifyContent: 'space-between'
+    },
 
 });

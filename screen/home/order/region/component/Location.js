@@ -21,7 +21,7 @@ function Location(props) {
     const suggestion = async (address) => {
 
         const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${GoogleApiKey}
-        &input=${address}&location=${props.currentLatLng.latitude},${props.currentLatLng.longitude}&radius=5000`;
+        &input=${address}&location=${props.route.params.currentLatLng.latitude},${props.route.params.currentLatLng.longitude}&radius=5000`;
         try {
             const result = await fetch(apiUrl);
             const json = await result.json();
@@ -75,9 +75,7 @@ function Location(props) {
     return (
         !mapVisible ?
             <View style={styles.container}>
-                <TouchableOpacity activeOpacity={0.7} onPress={() => props.HandleParentFunc(false)}>
-                    <MaterialCommunityIcons name='close' size={22} />
-                </TouchableOpacity>
+          
 
                 <View style={styles.search} activeOpacity={0.7}>
                     <MaterialCommunityIcons name='magnify' size={20} style={styles.searchIcon} />
@@ -104,7 +102,7 @@ function Location(props) {
                 </View>
             </View>
 
-            : <Map data={mapData}  HandleParentFunc={props.HandleParentFunc} />
+            : <Map data={mapData} nav={props.navigation} />
 
     )
 }
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
     },
     search: {
-        marginTop: 10,
+        marginTop: 30,
         borderWidth: 0.35,
         borderColor: '#999',
         flexDirection: 'row',

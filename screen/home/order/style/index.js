@@ -46,15 +46,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 
-    bottomModal: {
-        justifyContent: 'flex-end',
-        margin: 0,
-    },
-    modal: {
-        flex: 1,
-        backgroundColor: '#fff',
-        borderColor: 'rgba(0, 0, 0, 0.1)',
-    },
 })
 
 

@@ -1,11 +1,13 @@
 import {locationReducer} from './location'
-import {counter} from './counter';
+import {selectedItem  ,bucket} from './cart';
 import {combineReducers} from 'redux'
 
 const RootReducer=combineReducers({
-
+  
     locationReducer:locationReducer,
-    counter: counter
+    selectedItem: selectedItem,
+    bucket:bucket,
+
 })
 
 

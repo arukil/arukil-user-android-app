@@ -19,12 +19,12 @@ const Map = (props) => {
     let map = null;
 
     const [initialregion, setInitialRegion] = React.useState({
-        latitude:  props.data.latitude ,
+        latitude: props.data.latitude,
         longitude: props.data.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
     })
-   
+
 
     const [address, setAddress] = React.useState({})
 
@@ -41,19 +41,19 @@ const Map = (props) => {
 
 
     const gotToMyLocation = () => {
-        
+
         Geolocation.getCurrentPosition(pos => {
-             map? 
+            map ?
                 map.animateToRegion({
-                    latitude: pos.coords.latitude,longitude: pos.coords.longitude,
-                    latitudeDelta: LATITUDE_DELTA,longitudeDelta: LONGITUDE_DELTA
+                    latitude: pos.coords.latitude, longitude: pos.coords.longitude,
+                    latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA
                 })
-              :
+                :
                 setInitialRegion({
-                    latitude: pos.coords.latitude,longitude: pos.coords.longitude,
-                    latitudeDelta: LATITUDE_DELTA,longitudeDelta: LONGITUDE_DELTA
+                    latitude: pos.coords.latitude, longitude: pos.coords.longitude,
+                    latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA
                 })
-             return;
+            return;
         },
             err => {
                 alert("Fetching the Position failed, please check location is enable!");
@@ -65,14 +65,13 @@ const Map = (props) => {
 
 
     React.useEffect(() => {
-        props.data.latitude===0 && props.data.longitude===0? gotToMyLocation():null;
+        props.data.latitude === 0 && props.data.longitude === 0 ? gotToMyLocation() : null;
     }, [])
 
 
     const location_redux_update = () => {
-
         props.CURRENT_LOCATION(address)
-        return props.HandleParentFunc(false)
+        return props.nav.pop();
     }
 
     return (
@@ -90,9 +89,7 @@ const Map = (props) => {
                         onRegionChangeComplete={(marker) => geocoder(marker.latitude, marker.longitude)}
                     >
                     </MapView> : null}
-                <TouchableOpacity  activeOpacity={0.7} onPress={() => props.HandleParentFunc(false)} style={styles.backButton}>
-                    <MaterialCommunityIcons name='arrow-left' size={22} />
-                </TouchableOpacity>
+              
                 <Image source={require('../../../../assets/image/mapmarker.png')} style={styles.marker} />
                 <TouchableOpacity style={styles.locationButton} activeOpacity={0.7} onPress={() => gotToMyLocation()}>
                     <MaterialCommunityIcons name='crosshairs-gps' size={20} style={styles.locationButtonIcon} />
@@ -198,7 +195,7 @@ const styles = StyleSheet.create({
         top: '43.5%',
         left: '45.8%'
     },
-    backButton:{
-        position:'absolute',top:5 ,padding:10
+    backButton: {
+        position: 'absolute', top: 5, padding: 10
     }
 })

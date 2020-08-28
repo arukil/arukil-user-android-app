@@ -13,7 +13,7 @@ import Account from './account/component/index';
 import ProductList from './order/common/component/productList';
 import Search from './order/common/component/search';
 import Vegetable from './order/component/vegetable';
-
+import Location from './order/region/component/Location';
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -115,6 +115,12 @@ function StackNavigator() {
 
                 <Stack.Screen name="Search" component={Search} options={{
                     headerShown: false,
+                }}
+                />
+                  <Stack.Screen name="Location" component={Location} options={{
+                    headerShown: true,
+                    headerTransparent: true,
+                    title:false
                 }}
                 />
 
