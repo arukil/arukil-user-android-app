@@ -15,7 +15,7 @@ const dataProvider = new DataProvider((r1, r2) => {
     return r1 !== r2;
 });
 
-var List='List';
+var List = 'List';
 
 class Grocery extends React.Component {
 
@@ -51,6 +51,7 @@ class Grocery extends React.Component {
 
         await axios.get('https://arukil.herokuapp.com/api/products/grocery')
             .then(response => {
+                console.log('grocery enter')
                 return Data = response.data.data;
             }).catch(error => {
                 console.log(error)
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
     listImage: {
         width: '80%',
         height: '60%',
-        aspectRatio:1
+        aspectRatio: 1
     },
     listName: {
         fontSize: 13,

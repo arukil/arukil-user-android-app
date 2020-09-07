@@ -71,7 +71,7 @@ class Fruit extends React.Component {
 
         return (
             <View style={styles.listView}>
-                <Image source={{ uri: image }} style={styles.image} />
+                <Image source={{ uri: image }} resizeMode='contain' style={styles.image} />
                 <View style={styles.listContent}>
                     <Text style={styles.listname} numberOfLines={1}>{name}</Text>
                     <View style={styles.subdiv}>

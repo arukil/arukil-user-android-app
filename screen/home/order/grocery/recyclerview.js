@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import axios from 'axios';
 import CartBtn from '../helper/vf_helper/cartbtn';
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height / 5;
+const SCREEN_HEIGHT = Dimensions.get('window').height / 5.5;
 
 
 const dataProvider = new DataProvider((r1, r2) => {
@@ -58,11 +58,13 @@ class Recyclerview extends Component {
             <View style={styles.listView}>
                 <Image source={{ uri: image }} resizeMode='center' style={styles.image} />
                 <View style={styles.listContent}>
-                    <Text style={styles.listname} numberOfLines={1}>{name}</Text>
-                    {/* <Text style={{color:'#999+'}} numberOfLines={1}>{flavour}</Text> */}
+                    {!flavour ?
+                        <Text style={styles.listname} numberOfLines={1}>{name}</Text>
+                        :
+                        <Text style={{ color: '#4f4f4f' }} numberOfLines={1}>{flavour}</Text>
+                    }
                     <View style={styles.subdiv}>
                         <Text style={{ color: '#999' }}>{available[0].weight}</Text>
-
                         <CartBtn data={data} />
                     </View>
                     <Text style={styles.price}>
@@ -192,19 +194,19 @@ const styles = StyleSheet.create({
     listContent: {
         width: '65%',
         height: '80%',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
     },
     image: {
         width: '25%',
         height: '55%',
         borderRadius: 5,
-        aspectRatio:1
+        aspectRatio: 1
     },
     listname: {
         width: '90%',
         fontSize: 14,
         fontWeight: '600',
-        color: '#333'
+        color: '#999'
     },
     overlayBtn: {
         flexDirection: 'row',

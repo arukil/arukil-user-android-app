@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
         width: '25%',
         height: '55%',
         borderRadius: 5,
+        aspectRatio:1
     },
     listname: {
         width: '90%',

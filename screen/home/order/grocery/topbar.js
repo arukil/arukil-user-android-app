@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { connect } from 'react-redux'
 import axios from 'axios';
 
-const selectedColor = '#e91e63';
+const selectedColor = '#fff';
 const unSelectedColor = '#4f4f4f';
 
 
@@ -13,7 +13,6 @@ class Topbar extends React.Component {
 
     constructor(props) {
         super(props)
-
         props.navigation.setOptions({ title: props.route.params.data.name })
         this.state = {
             isLoading: true,
@@ -29,7 +28,6 @@ class Topbar extends React.Component {
         await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.data.name}`)
             .then(response => {
                 const res = response.data.data;
-                console.log(res)
                 return this.setState({ list: res });
             }).catch(error => {
                 console.log(error)
@@ -37,10 +35,8 @@ class Topbar extends React.Component {
 
         await this.setState({ productType: this.props.route.params.data.list[0] },
             async () => {
-
                 var obj = await this.state.list.find(({ name }) => name === this.state.productType)
                 this.setState({ selectedProduct: obj, isLoading: false })
-
             })
 
     }
@@ -48,13 +44,13 @@ class Topbar extends React.Component {
     topbar = () => {
         return this.props.route.params.data.list.map((name, index) => {
             return (
-                <TouchableOpacity activeOpacity={0.7} style={styles.productListTitle} onPress={() => this.setState({ productType: name }, () => {
-
-                    var obj = this.state.list.find(({ name }) => name === this.state.productType)
-                    this.setState({ selectedProduct: obj })
-
-                })} key={index}>
-                    <Text style={{ fontSize: 16, color: this.state.productType === name ? selectedColor : unSelectedColor }}>{name}</Text>
+                <TouchableOpacity activeOpacity={1} style={[styles.productListTitle,
+                { backgroundColor: name === this.state.productType ? '#e91e63' : '#f9f9f9' , marginLeft:index===0?0:10 }]}
+                    onPress={() => this.setState({ productType: name }, () => {
+                        var obj = this.state.list.find(({ name }) => name === this.state.productType)
+                        this.setState({ selectedProduct: obj })
+                    })} key={index}>
+                    <Text numberOfLines={2} style={{ textAlign: 'center', fontSize: 13, color: this.state.productType === name ? selectedColor : unSelectedColor }}>{name}</Text>
                 </TouchableOpacity>
             )
         });
@@ -66,11 +62,11 @@ class Topbar extends React.Component {
         return (
             !this.state.isLoading ?
                 <View style={styles.container} >
-                    <View style={[styles.header, { height: '14%' }]}>
+                    <View style={[styles.header, { height: '15.5%' }]}>
 
-                        <TouchableOpacity style={styles.searchBar} activeOpacity={0.7}
-                            onPress={() => props.navigation.navigate('Search')}>
-                            <MaterialCommunityIcons name='magnify' size={18} />
+                        <TouchableOpacity activeOpacity={1} style={styles.searchBar}
+                            onPress={() => this.props.navigation.navigate('Search')}>
+                            <MaterialCommunityIcons name='magnify' color={'#999'} size={18} />
                             <Text style={styles.searchBarText}>Search for an item...</Text>
                         </TouchableOpacity>
 
@@ -81,8 +77,9 @@ class Topbar extends React.Component {
                         </View>
 
                     </View>
-                    {Object.keys(this.state.selectedProduct).length > 1 ? <RecyclerListView data={this.state.selectedProduct} /> : null}
-
+                    <View style={styles.body}>
+                        {Object.keys(this.state.selectedProduct).length > 1 ? <RecyclerListView data={this.state.selectedProduct} /> : null}
+                    </View>
                 </View>
                 :
                 <View style={styles.loader}>
@@ -133,16 +130,17 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        borderBottomWidth: 0.4,
-        borderColor: '#ddd'
+
     },
     searchBar: {
-        borderWidth: 0.3,
-        padding: 8,
-        borderColor: '#999',
+        borderWidth: 1,
+        borderTopWidth:2,
+        padding: 11,
+        borderColor: '#f5f5f5',
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: 5,
+        elevation: 1,
     },
     searchBarText: {
         color: '#999',
@@ -150,11 +148,25 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     productListTitle: {
-        padding: 8
+        width: 100,
+        height: 35,
+        borderWidth: 1,
+        borderColor: '#f9f9f9',
+        backgroundColor: '#f9f9f9',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        elevation: 1
+
     },
     productListTitleText: {
-        fontSize: 16,
+        fontSize: 10,
+
     },
+    body: {
+        flex: 1,
+        paddingVertical: 10,
+    }
 
 });
 

@@ -17,7 +17,7 @@ function StackNavigator() {
 
             <Stack.Navigator screenOptions={{
                 headerShown: true,
-
+            
             }}>
 
                 <Stack.Screen name='Index' component={BottomTabNavigator} options={{
@@ -37,6 +37,7 @@ function StackNavigator() {
                     headerStyle: {
                         elevation: 0,
                     },
+                    
                 }}
                 />
 
