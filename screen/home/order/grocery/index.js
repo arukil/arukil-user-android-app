@@ -68,11 +68,11 @@ class Grocery extends React.Component {
 
         return (
             <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() =>
-                this.props.navigation.navigate(data.name, {
+                this.props.navigation.navigate('Topbar', {
                     data: data
                 })}>
                 <View style={styles.innerCard}>
-                    <Image source={{ uri: data.image }} style={styles.listImage} />
+                    <Image source={{ uri: data.image }} resizeMode='contain' style={styles.listImage} />
                     <Text style={styles.listName} numberOfLines={2} >{data.name} </Text>
                 </View>
             </TouchableOpacity >
@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
     listImage: {
         width: '80%',
         height: '60%',
+        aspectRatio:1
     },
     listName: {
         fontSize: 13,

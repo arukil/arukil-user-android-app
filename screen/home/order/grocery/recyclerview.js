@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
 import { connect } from 'react-redux'
 import axios from 'axios';
-import CartBtn from '../../../helper/vf_helper/cartbtn';
+import CartBtn from '../helper/vf_helper/cartbtn';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height / 5;
 
@@ -52,15 +52,17 @@ class Recyclerview extends Component {
 
 
     rowRenderer = (type, data) => {
-        const { name, available, image } = data;
+        const { name, available, image, flavour } = data;
 
         return (
             <View style={styles.listView}>
-                <Image source={{ uri: image }} style={styles.image} />
+                <Image source={{ uri: image }} resizeMode='center' style={styles.image} />
                 <View style={styles.listContent}>
                     <Text style={styles.listname} numberOfLines={1}>{name}</Text>
+                    {/* <Text style={{color:'#999+'}} numberOfLines={1}>{flavour}</Text> */}
                     <View style={styles.subdiv}>
                         <Text style={{ color: '#999' }}>{available[0].weight}</Text>
+
                         <CartBtn data={data} />
                     </View>
                     <Text style={styles.price}>
@@ -196,6 +198,7 @@ const styles = StyleSheet.create({
         width: '25%',
         height: '55%',
         borderRadius: 5,
+        aspectRatio:1
     },
     listname: {
         width: '90%',

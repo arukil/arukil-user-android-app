@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
 
 import BottomTabNavigator from './bottomTabNavigator';
-import Personalcare from '../order/grocery/section/personalcare/index';
+import Topbar from '../order/grocery/topbar';
 import Search from '../order/helper/search';
 import GetLocation from '../region/component/getLocation';
 
@@ -26,8 +26,8 @@ function StackNavigator() {
                 }}
                 />
 
-                
-                <Stack.Screen name="Personalcare" component={Personalcare} options={{
+
+                <Stack.Screen name="Topbar" component={Topbar} options={{
                     headerTransparent: false,
                     headerTitleStyle: {
                         fontSize: 16,
@@ -40,14 +40,15 @@ function StackNavigator() {
                 }}
                 />
 
+
                 <Stack.Screen name="Search" component={Search} options={{
                     headerShown: false,
                 }}
                 />
-                  <Stack.Screen name="GetLocation" component={GetLocation} options={{
+                <Stack.Screen name="GetLocation" component={GetLocation} options={{
                     headerShown: true,
                     headerTransparent: true,
-                    title:false
+                    title: false
                 }}
                 />
 

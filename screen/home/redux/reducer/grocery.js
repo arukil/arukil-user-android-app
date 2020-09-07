@@ -1,5 +1,6 @@
 const initialStatePersonalcare = {
     item: [],
+    help:{}
 };
 
 export function personalcare(state = initialStatePersonalcare, action) {
@@ -8,6 +9,10 @@ export function personalcare(state = initialStatePersonalcare, action) {
         case 'ADD_PERSONALCARE':
             return {
                 item: action.data
+            };
+        case 'HELP_PERSONALCARE':
+            return {
+                help: action.data
             };
         case 'RESET_PERSONALCARE':
             return {
