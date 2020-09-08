@@ -20,9 +20,6 @@ class Vegetable_Fruit extends Component {
         this.state = {
             isLoading: true,
             list: dataProvider.cloneWithRows({}),
-            productTypeIndex: 0,
-            ismodelVisible: false,
-            selectedItem: []
         };
         this.layoutProvider = new LayoutProvider();
     }

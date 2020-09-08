@@ -45,7 +45,7 @@ class Topbar extends React.Component {
         return this.props.route.params.data.list.map((name, index) => {
             return (
                 <TouchableOpacity activeOpacity={1} style={[styles.productListTitle,
-                { backgroundColor: name === this.state.productType ? '#e91e63' : '#f9f9f9' , marginLeft:index===0?0:10 }]}
+                { backgroundColor: name === this.state.productType ? '#e91e63' : '#f9f9f9', marginLeft: index === 0 ? 0 : 10 }]}
                     onPress={() => this.setState({ productType: name }, () => {
                         var obj = this.state.list.find(({ name }) => name === this.state.productType)
                         this.setState({ selectedProduct: obj })
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     },
     searchBar: {
         borderWidth: 1,
-        borderTopWidth:2,
+        borderTopWidth: 2,
         padding: 11,
         borderColor: '#f5f5f5',
         flexDirection: 'row',

@@ -7,51 +7,66 @@ import { connect } from 'react-redux'
 
 function CartAddBtn(props) {
 
-    const [state, setstate] = React.useState({
-        quantity: 0,
-    })
+    const item = props.data;
+
+    const [quantity, setQuantity] = React.useState(0)
 
     React.useEffect(() => {
-      
-
+         
+      console.log(props.bucket)
     }, [props.bucket]);
+
+
+    const selecterHandler = async (item) => {
+        let obj = await props.bucket.find(({ name }) => name === item.name)
+        if (obj) {
+            await Object.assign(obj, { quantity: obj.quantity + 1 });
+            return setQuantity(obj.quantity);
+        }
+        else {
+            await props.ADD_TO_BUCKET({
+                name: item.name,
+                image: item.image,
+                quantity: 1,
+                price: item.available[0].price,
+                weight: item.available[0].weight,
+                type: item.type
+            })
+            return setQuantity(1);
+        }
+
+    }
 
     return (
 
-        state.quantity === 0 ?
-            <TouchableOpacity activeOpacity={1} onPress={() => props.ADD_ITEM(props.data)} style={styles.btnContainer}>
+        quantity === 0  ?
+            <TouchableOpacity activeOpacity={1} onPress={() => selecterHandler(item)} style={styles.btnContainer}>
                 <View style={styles.button}>
                     <Text style={{ fontSize: 10, color: '#e91e63' }}>ADD</Text>
                     <MaterialCommunityIcons name='plus' color={'#e91e63'} />
                 </View>
-                {props.data.available.length > 1 ? <Text style={{ fontSize: 10, color: 'orange', marginTop: 2 }} >customizable</Text> : null}
             </TouchableOpacity>
             :
             <Counter
                 min={0}
-                onChange={(val) => setstate({ quantity: val })}
+                onChange={() => selecterHandler(item)}
                 start={1}
                 max={5}
             />
-
     )
 }
 
 
 const mapStateToProps = state => {
     return {
-        item: state.selectedItem.item,
         bucket: state.bucket.item
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        ADD_ITEM: (data) => {
-            dispatch({ type: 'ADD_ITEM', data })
-        },
-        ADD_BUCKET: (data) => {
-            dispatch({ type: 'ADD_BUCKET', data })
+        ADD_TO_BUCKET: (data) => {
+            dispatch({ type: 'ADD_TO_BUCKET', data })
         }
     };
 }
