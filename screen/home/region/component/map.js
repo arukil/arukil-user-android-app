@@ -19,12 +19,11 @@ const Map = (props) => {
     let map = null;
 
     const [initialregion, setInitialRegion] = React.useState({
-        latitude: props.data.latitude,
-        longitude: props.data.longitude,
+        latitude: 0,
+        longitude: 0,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
     })
-
 
     const [address, setAddress] = React.useState({})
 
@@ -43,35 +42,44 @@ const Map = (props) => {
     const gotToMyLocation = () => {
 
         Geolocation.getCurrentPosition(pos => {
-            map ?
-                map.animateToRegion({
+            if (map) {
+                return map.animateToRegion({
                     latitude: pos.coords.latitude, longitude: pos.coords.longitude,
                     latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA
                 })
-                :
-                setInitialRegion({
-                    latitude: pos.coords.latitude, longitude: pos.coords.longitude,
-                    latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA
+            }
+            else {
+                return setInitialRegion({
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA,
                 })
-            return;
+
+            }
         },
             err => {
                 alert("Fetching the Position failed, please check location is enable!");
             },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 1000 }
         );
 
     }
 
-
     React.useEffect(() => {
-        props.data.latitude === 0 && props.data.longitude === 0 ? gotToMyLocation() : null;
+        props.route.params.location.latitude === 0 ? gotToMyLocation() :
+            setInitialRegion({
+                latitude: props.route.params.location.latitude,
+                longitude: props.route.params.location.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+            })
     }, [])
 
 
-    const location_redux_update =async() => {
-        await props.CURRENT_LOCATION(address)
-        return props.nav.pop();
+    const location_redux_update = async () => {
+        await props.GET_LOCATION(address)
+        return props.navigation.navigate('Index');
     }
 
     return (
@@ -97,7 +105,6 @@ const Map = (props) => {
 
             </View>
             <View style={styles.body}>
-
                 <TouchableOpacity style={styles.input}>
                     <View style={styles.inputContainer}>
                         <MaterialCommunityIcons name='map-marker' size={35} color={'#e91e63'} />
@@ -117,8 +124,8 @@ const Map = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        CURRENT_LOCATION: (data) => {
-            dispatch({ type: 'CURRENT_LOCATION', data })
+        GET_LOCATION: (data) => {
+            dispatch({ type: 'GET_LOCATION', data })
         }
     };
 }

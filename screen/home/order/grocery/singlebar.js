@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Dimensions, Text, Image } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator,Dimensions ,Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
-import { connect } from 'react-redux'
 import axios from 'axios';
+import Cart from '../helper/cart';
+import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
 import CartBtn from '../helper/cartbtn';
+
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height / 5.5;
 
@@ -13,14 +15,15 @@ const dataProvider = new DataProvider((r1, r2) => {
     return r1 !== r2;
 });
 
-class Recyclerview extends Component {
+class Singlebar extends React.Component {
+
 
     constructor(props) {
         super(props)
+        props.navigation.setOptions({ title: props.route.params.data.name })
         this.state = {
             isLoading: true,
-            list: dataProvider.cloneWithRows({}),
-            propsChange: ''
+            list: dataProvider.cloneWithRows([]),
         };
         this.layoutProvider = new LayoutProvider();
     }
@@ -43,7 +46,6 @@ class Recyclerview extends Component {
             };
         });
     }
-
 
 
 
@@ -82,41 +84,48 @@ class Recyclerview extends Component {
     }
 
 
-    static getDerivedStateFromProps(props, state) {
-
-        if (props.data.name !== state.propsChange && state.propsChange !== '') {
-            return {
-                list: dataProvider.cloneWithRows(props.data.list),
-                propsChange: props.data.name
-            }
-        }
-
-        return state.list
-    }
-
-
     async componentDidMount() {
-
-        this.setState({
-            list: dataProvider.cloneWithRows(this.props.data.list),
-            propsChange: this.props.data.name
-        }, this._layoutHandler());
-
+        await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.data.name}`)
+            .then(response => {
+                const res = response.data.data;
+                return this.setState({
+                    list: dataProvider.cloneWithRows(res),
+                }, this._layoutHandler());
+            }).catch(error => {
+                console.log(error)
+            })
     }
+
+
 
     render() {
-
         return (
+            !this.state.isLoading ?
+                <View style={styles.container} >
+                    <View style={styles.header}>
 
-            <RecyclerListView
-                style={styles.body}
-                rowRenderer={this.rowRenderer}
-                dataProvider={this.state.list}
-                layoutProvider={this.layoutProvider}
-                scrollViewProps={{
-                    showsVerticalScrollIndicator: false,
-                }}
-            />
+                        <TouchableOpacity activeOpacity={1} style={styles.searchBar}
+                            onPress={() => this.props.navigation.navigate('Search')}>
+                            <MaterialCommunityIcons name='magnify' color={'#999'} size={18} />
+                            <Text style={styles.searchBarText}>Search for an item...</Text>
+                        </TouchableOpacity>
+                    </View>
+                  
+                    <RecyclerListView
+                        style={styles.body}
+                        rowRenderer={this.rowRenderer}
+                        dataProvider={this.state.list}
+                        layoutProvider={this.layoutProvider}
+                        scrollViewProps={{
+                            showsVerticalScrollIndicator: false,
+                        }}
+                    />
+                    <Cart navigation={this.props.navigation} />
+                </View>
+                :
+                <View style={styles.loader}>
+                    <ActivityIndicator size="large" color="#e91e63" />
+                </View>
 
 
         );
@@ -125,25 +134,7 @@ class Recyclerview extends Component {
 
 
 
-const mapStateToProps = state => {
-    return {
-        item: state.personalcare.item,
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        ADD_PERSONALCARE: (data) => {
-            dispatch({ type: 'ADD_PERSONALCARE', data })
-        },
-        RESET_PERSONALCARE: () => {
-            dispatch({ type: 'RESET_PERSONALCARE' })
-        },
-    };
-
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Recyclerview)
+export default Singlebar;
 
 
 const styles = StyleSheet.create({
@@ -151,26 +142,30 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        paddingHorizontal: 10,
     },
     loader: {
         flex: 1,
+        backgroundColor: '#fcfcfc',
         justifyContent: 'center'
     },
     header: {
         width: '100%',
+        padding:5,
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        borderBottomWidth: 0.4,
-        borderColor: '#ddd'
+        justifyContent: 'space-around',
+        paddingHorizontal: 10,
+
+
     },
     searchBar: {
-        borderWidth: 0.3,
-        padding: 8,
-        borderColor: '#999',
+
+        borderWidth: 0.2,
+        padding: 10,
+        borderColor: '#f5f5f5',
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: 5,
+        elevation: 1,
     },
     searchBarText: {
         color: '#999',
@@ -178,11 +173,19 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     productListTitle: {
-        padding: 8,
+        width: 120,
+        height: 35,
+        borderWidth: 0.7,
+        borderColor: '#ddd',
+        backgroundColor: 'silver',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+
     },
     productListTitleText: {
-        fontSize: 14,
-        fontWeight: '700',
+        fontSize: 10,
+
     },
     body: {
         flex: 1,
@@ -235,7 +238,10 @@ const styles = StyleSheet.create({
 
 
 
+
 });
+
+
 
 
 

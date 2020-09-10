@@ -4,7 +4,7 @@ import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios'
 import styles from './style'
-import CartBtn from '../helper/vf_helper/cartbtn'
+import CartBtn from '../helper/cartbtn'
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height / 6;

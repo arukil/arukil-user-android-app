@@ -1,15 +1,14 @@
 import React from 'react'
 import Recyclerview from './recyclerview';
 import { View } from 'react-native';
-import Cart from '../helper/vf_helper/cart';
-import { connect } from 'react-redux'
+import Cart from '../helper/cart';
 
 
 function Vegetable(props) {
     return (
         <View style={{ flex: 1, backgroundColor: '#ffffff', }}>
             <Recyclerview />
-            <Cart />
+            <Cart navigation={props.navigation}/>
         </View>
     )
 }

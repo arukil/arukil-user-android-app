@@ -1,11 +1,11 @@
 const initialLocationState = {
-  location: {}
+  location: {},
 };
 
 export function locationReducer(state = initialLocationState, action) {
 
   switch (action.type) {
-    case 'CURRENT_LOCATION':
+    case 'GET_LOCATION':
       return {
         location: action.data
       };
@@ -15,5 +15,23 @@ export function locationReducer(state = initialLocationState, action) {
   }
 }
 
+
+const initialUserLocationState = {
+  userLocation:{}
+};
+
+export function userLocationReducer(state = initialUserLocationState, action) {
+
+  switch (action.type) {
+
+      case 'USER_CURRENT_LOCATION':
+      return {
+        userLocation: action.data
+      };
+
+    default:
+      return state;
+  }
+}
 
 

@@ -5,23 +5,18 @@ import GoogleApiKey from '../../../config';
 import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux'
-import Map from './map'
 
 
 function Location(props) {
 
     const [address, setAddress] = React.useState('');
     const [predictions, setPredictions] = React.useState([]);
-    const [mapVisible, setMapVisible] = React.useState(false);
-    const [mapData, setMapData] = React.useState({
-        latitude: 0,
-        longitude: 0,
-    });
+
 
     const suggestion = async (address) => {
 
         const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${GoogleApiKey}
-        &input=${address}&location=${props.route.params.currentLatLng.latitude},${props.route.params.currentLatLng.longitude}&radius=5000`;
+        &input=${address}&location=${props.userLocation.geometry.location.lat},${props.userLocation.geometry.location.lng}&radius=5000`;
         try {
             const result = await fetch(apiUrl);
             const json = await result.json();
@@ -34,21 +29,22 @@ function Location(props) {
     }
 
     const geocoder = async (params) => {
+        console.log(params)
         await Geocoder.init(GoogleApiKey)
         await Geocoder.from(params).then(
             response => {
                 const { lat, lng } = response.results[0].geometry.location;
-                setMapData({ latitude: lat, longitude: lng });
-                return setMapVisible(true);
+                const latlng = {
+                    latitude: lat,
+                    longitude: lng
+                }
+                props.navigation.navigate('Map', { location: latlng })
+                return;
             },
-            error => {console.error(error);}
+            error => { console.error(error); }
         );
     }
 
-
-    const mapHandler = (params) => {
-        return Object.keys(params).length > 0 ? geocoder(params.description):setMapVisible(true);
-    }
 
 
 
@@ -58,8 +54,8 @@ function Location(props) {
 
 
     const prediction = predictions.map(prediction =>
-        <TouchableOpacity activeOpacity={0.7} onPress={() => mapHandler(prediction)}
-            style={styles.suggestions} key={prediction.id}>
+        <TouchableOpacity activeOpacity={0.7} onPress={() => geocoder(prediction.description)}
+            style={styles.suggestions} key={prediction.place_id}>
             <MaterialCommunityIcons name="map-marker" size={20} color="#999" />
             <View style={styles.predictionsContent}>
                 <Text style={styles.predictionMainText} numberOfLines={1}>
@@ -73,42 +69,48 @@ function Location(props) {
     );
 
     return (
-        !mapVisible ?
-            <View style={styles.container}>
-          
 
-                <View style={styles.search} activeOpacity={0.7}>
-                    <MaterialCommunityIcons name='magnify' size={20} style={styles.searchIcon} />
-                    <TextInput placeholder='search for your loctaion...' style={styles.InputField}
-                        onChangeText={(text) => setAddress(text)}
-                        value={address}
-                    />
-                    {address.length > 0 ?
-                        <TouchableOpacity activeOpacity={0.7} onPress={() => setAddress('')}>
-                            <MaterialCommunityIcons name='close' size={20} style={styles.searchIcon} />
-                        </TouchableOpacity>
-                        : null}
-                </View>
-                <View style={styles.body}>
-                    <TouchableOpacity style={styles.currentLocation} onPress={() => mapHandler({})}>
-                        <MaterialCommunityIcons name='crosshairs-gps' size={20} color='#e91e63' />
-                        <Text style={styles.currentLocationText}>use current Location</Text>
+        <View style={styles.container}>
+
+            <View style={styles.search} activeOpacity={0.7}>
+                <MaterialCommunityIcons name='magnify' size={20} style={styles.searchIcon} />
+                <TextInput placeholder='search for your loctaion...' style={styles.InputField}
+                    onChangeText={(text) => setAddress(text)}
+                    value={address}
+                />
+                {address.length > 0 ?
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => setAddress('')}>
+                        <MaterialCommunityIcons name='close' size={20} style={styles.searchIcon} />
                     </TouchableOpacity>
-                    {address.length >= 3 ? prediction :
-                        <View style={styles.savedLocation}>
-
-                        </View>
-                    }
-                </View>
+                    : null}
             </View>
+            <View style={styles.body}>
+                <TouchableOpacity style={styles.currentLocation} activeOpacity={0.7} onPress={() => props.navigation.navigate('Map', { location: { latitude: 0, longitude: 0 } })}>
+                    <MaterialCommunityIcons name='crosshairs-gps' size={20} color='#e91e63' />
+                    <Text style={styles.currentLocationText}>use current Location</Text>
+                </TouchableOpacity>
+                {address.length >= 3 ? prediction :
+                    <View style={styles.savedLocation}>
 
-            : <Map data={mapData} nav={props.navigation} />
+                    </View>
+                }
+            </View>
+        </View>
+
 
     )
 }
 
 
-export default connect()(Location);
+const mapStateToProps = (state) => {
+    return {
+        userLocation: state.userLocationReducer.userLocation
+    }
+}
+
+
+export default connect(mapStateToProps)(Location);
+
 
 const styles = StyleSheet.create({
     container: {

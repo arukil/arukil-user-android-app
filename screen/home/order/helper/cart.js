@@ -5,16 +5,30 @@ import { connect } from 'react-redux';
 import * as Animation from 'react-native-animatable';
 
 function AddCartContainer(props) {
+
+    const [totalprice, setPrice] = React.useState(0)
+
+    React.useEffect(() => {
+        setPrice(0)
+        // props.bucket.map(({ price, quantity }) => setPrice( += (price * quantity)))
+
+    }, [props.bucket])
+
+
+
+ 
+
+
     return (
 
-        props.bucket.length > 0 ? <Animation.View style={styles.cart} animation={'fadeInUp'}>
-            <Text style={{ color: '#fff' }}>{props.bucket.length} item. 10 Kg.
+        props.bucket.length > 0 ? <TouchableOpacity style={styles.cart}  activeOpacity={0.9} onPress={() => props.navigation.navigate('Cart')}>
+            <Text style={{ color: '#fff' }}>{props.bucket.length} item.{}10 Kg.
             <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />566</Text>
-            <TouchableOpacity style={styles.rightcart} onPress={() => props.BUCKET_RESET()}>
-                <Text style={{ color: '#fff', fontSize: 16 }}>View Cart </Text>
+            <View style={styles.rightcart} >
+                <Text style={{ color: '#fff', fontSize: 16 ,fontWeight:'bold' }}>View Cart </Text>
                 <MaterialCommunityIcons name='chevron-right' size={18} color={'#fff'} />
-            </TouchableOpacity>
-        </Animation.View> : null
+            </View>
+        </TouchableOpacity> : null
 
     )
 }
@@ -35,8 +49,6 @@ const mapDispatchToProps = (dispatch) => {
             dispatch({ type: 'BUCKET_RESET' })
         }
 
-
-
     };
 }
 
@@ -46,7 +58,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(AddCartContainer)
 const styles = StyleSheet.create({
     cart: {
         padding: 5,
-        backgroundColor: '#e91e63',
+        backgroundColor: '#009c02',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

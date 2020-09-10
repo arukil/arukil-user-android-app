@@ -15,7 +15,10 @@ const dataProvider = new DataProvider((r1, r2) => {
     return r1 !== r2;
 });
 
-var List = 'List';
+const offerImage = [
+    'https://arukil.s3.ap-south-1.amazonaws.com/offercard/Offer-01-01+(1).jpg',
+    'https://arukil.s3.ap-south-1.amazonaws.com/offercard/Free-Delivery.jpg'
+]
 
 class Grocery extends React.Component {
 
@@ -47,31 +50,33 @@ class Grocery extends React.Component {
     }
 
     async componentDidMount() {
-        var Data = []
 
         await axios.get('https://arukil.herokuapp.com/api/products/grocery')
             .then(response => {
-                console.log('grocery enter')
-                return Data = response.data.data;
+                const res = response.data.data;
+                return this.setState({
+                    list: dataProvider.cloneWithRows(res),
+                }, this._layoutHandler());
             }).catch(error => {
                 console.log(error)
             })
-
-        this.setState({
-            list: dataProvider.cloneWithRows(Data),
-        }, this._layoutHandler());
-
     }
 
 
 
     rowRenderer = (type, data) => {
-
+        console.log(data.name)
         return (
             <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() =>
-                this.props.navigation.navigate('Topbar', {
-                    data: data
-                })}>
+                data.name !== 'Babycare' && data.name !== 'Beverage' ?
+
+                    this.props.navigation.navigate('Topbar', {
+                        data: data
+                    }) :
+                    this.props.navigation.navigate('Singlebar', {
+                        data: data
+                    })
+            }>
                 <View style={styles.innerCard}>
                     <Image source={{ uri: data.image }} resizeMode='contain' style={styles.listImage} />
                     <Text style={styles.listName} numberOfLines={2} >{data.name} </Text>
@@ -80,55 +85,48 @@ class Grocery extends React.Component {
         )
     }
 
+
     render() {
 
+        const slider = offerImage.map((image, index) =>
+            <View style={styles.slide} key={index}>
+                <Image
+                    source={{ uri: image }}
+                    resizeMode="cover"
+                    style={styles.sliderImage}
+                />
+            </View>
+        )
+
         return (
-            <View style={styles.container} >
 
-                <View style={styles.sliderContainer}>
-                    <Swiper
-                        activeDotColor={'#e91e63'}
-                        autoplay={true}
-                        dotStyle={{ width: 5, height: 5, top: 20 }}
-                        activeDotStyle={{ width: 5, height: 5, top: 20 }}>
 
-                        <View style={styles.slide}>
-                            <Image
-                                source={{ uri: 'https://arukil.s3.ap-south-1.amazonaws.com/offercard/Offer-01-01+(1).jpg' }}
-                                resizeMode="cover"
-                                style={styles.sliderImage}
-                            />
-                        </View>
-                        <View style={styles.slide}>
-                            <Image
-                                source={{ uri: 'https://arukil.s3.ap-south-1.amazonaws.com/offercard/Free-Delivery.jpg' }}
-                                resizeMode="cover"
-                                style={styles.sliderImage}
-                            />
-                        </View>
+            !this.state.isLoading ?
+                <View style={styles.container} >
 
-                    </Swiper>
+                    <View style={styles.sliderContainer}>
+                        <Swiper
+                            activeDotColor={'#e91e63'}
+                            autoplay={true}
+                            dotStyle={{ width: 5, height: 5, top: 20 }}
+                            activeDotStyle={{ width: 5, height: 5, top: 20 }}>
+                            {slider}
+                        </Swiper>
+                    </View>
+                    <RecyclerListView
+                        style={styles.body}
+                        rowRenderer={this.rowRenderer}
+                        dataProvider={this.state.list}
+                        layoutProvider={this.layoutProvider}
+                        scrollViewProps={{
+                            showsVerticalScrollIndicator: false,
+                        }}
+                    />
+                </View >
+                :
+                <View style={styles.loader}>
+                    <ActivityIndicator size="large" color="#e91e63" />
                 </View>
-
-                {
-                    !this.state.isLoading ?
-                        <RecyclerListView
-                            style={styles.body}
-                            rowRenderer={this.rowRenderer}
-                            dataProvider={this.state.list}
-                            layoutProvider={this.layoutProvider}
-                            scrollViewProps={{
-                                showsVerticalScrollIndicator: false,
-                            }}
-                        />
-                        :
-                        <View style={styles.loader}>
-                            <ActivityIndicator size="large" color="#e91e63" />
-                        </View>
-                }
-
-
-            </View >
         );
     }
 }
@@ -159,7 +157,8 @@ const styles = StyleSheet.create({
     },
     loader: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: '#ffffff',
     },
     body: {
         flex: 1,

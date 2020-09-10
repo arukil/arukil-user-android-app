@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Dimensions, Text, Image } from 'react-native';
+import {
+    StyleSheet, View, Dimensions,
+    Text, Image, TouchableOpacity, ActivityIndicator,
+    ScrollView,
+} from 'react-native';
+import { connect } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
-import { connect } from 'react-redux'
-import axios from 'axios';
 import CartBtn from '../helper/cartbtn';
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height / 5.5;
+const SCREEN_HEIGHT = Dimensions.get('window').height / 6;
 
 
 const dataProvider = new DataProvider((r1, r2) => {
@@ -36,6 +39,14 @@ class Recyclerview extends Component {
                     dim.width = SCREEN_WIDTH;
                     dim.height = SCREEN_HEIGHT;
                     break;
+                case "VEGETABLE":
+                    dim.width = SCREEN_WIDTH;
+                    dim.height = SCREEN_HEIGHT;
+                    break;
+                case "FRUIT":
+                    dim.width = SCREEN_WIDTH;
+                    dim.height = SCREEN_HEIGHT;
+                    break;
                 default:
                     dim.width = 0;
                     dim.height = 0;
@@ -48,7 +59,7 @@ class Recyclerview extends Component {
 
 
     rowRenderer = (type, data) => {
-        const { name, available, image, flavour } = data;
+        const { name, image, flavour ,price ,weight} = data;
 
         return (
             <View style={styles.listView}>
@@ -60,46 +71,33 @@ class Recyclerview extends Component {
                         <Text style={{ color: '#4f4f4f' }} numberOfLines={1}>{flavour}</Text>
                     }
                     <View style={styles.subdiv}>
-                        <Text style={{ color: '#999' }}>{available[0].weight}</Text>
-                        <CartBtn
-                            data={{
-                                brand: name,
-                                name: flavour,
-                                image: image,
-                                available: available,
-                                type: type
-                            }} />
+                        <Text style={{ color: '#999' }}>{weight}</Text>
+                        <CartBtn 
+                        data={{
+                           brand:name,
+                           name: flavour,
+                           image:image,
+                           type:type       
+                        }} />
                     </View>
                     <Text style={styles.price}>
                         <MaterialCommunityIcons name='currency-inr' size={15} color={'#000'} />
-                        {available[0].price}
+                        {price}
                     </Text>
                 </View>
             </View>
 
 
         )
+
     }
 
-
-    static getDerivedStateFromProps(props, state) {
-
-        if (props.data.name !== state.propsChange && state.propsChange !== '') {
-            return {
-                list: dataProvider.cloneWithRows(props.data.list),
-                propsChange: props.data.name
-            }
-        }
-
-        return state.list
-    }
 
 
     async componentDidMount() {
 
         this.setState({
-            list: dataProvider.cloneWithRows(this.props.data.list),
-            propsChange: this.props.data.name
+            list: dataProvider.cloneWithRows(this.props.bucket)
         }, this._layoutHandler());
 
     }
@@ -125,23 +123,26 @@ class Recyclerview extends Component {
 
 
 
+
 const mapStateToProps = state => {
     return {
-        item: state.personalcare.item,
+        bucket: state.bucket.item
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        ADD_PERSONALCARE: (data) => {
-            dispatch({ type: 'ADD_PERSONALCARE', data })
-        },
-        RESET_PERSONALCARE: () => {
-            dispatch({ type: 'RESET_PERSONALCARE' })
-        },
-    };
 
+        ADD_TO_BUCKET: (data) => {
+            dispatch({ type: 'ADD_TO_BUCKET', data })
+        },
+        BUCKET_RESET: () => {
+            dispatch({ type: 'BUCKET_RESET' })
+        }
+
+    };
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Recyclerview)
 
@@ -185,7 +186,9 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     body: {
-        flex: 1,
+        width:'100%',
+        height:'100%',
+        backgroundColor:'#fff'
     },
     listView: {
         width: '100%',
@@ -201,8 +204,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     image: {
-        width: '25%',
-        height: '55%',
+        width: '20%',
+        height: '45%',
         borderRadius: 5,
         aspectRatio: 1
     },

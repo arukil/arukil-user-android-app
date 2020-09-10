@@ -11,7 +11,12 @@ export function bucket(state = initialBucketState, action) {
         ...state,
         item: [...state.item, action.data]
       }
-
+    case 'REMOVE_FROM_BUCKET':
+      return {
+        item: state.item.filter(function (returnableObjects) {
+          return returnableObjects.name !== action.data.name;
+        })
+      }
     case 'BUCKET_RESET':
       return {
         item: []
