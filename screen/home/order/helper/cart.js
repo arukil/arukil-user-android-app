@@ -6,36 +6,46 @@ import * as Animation from 'react-native-animatable';
 
 function AddCartContainer(props) {
 
-    const [totalprice, setPrice] = React.useState(0)
+    const [wp, setWp] = React.useState({
+        price: 0,
+        Weight: 0
+    });
 
     React.useEffect(() => {
-        setPrice(0)
-        // props.bucket.map(({ price, quantity }) => setPrice( += (price * quantity)))
-
+        if (props.bucket.length > 0) {
+            var totalPrice = 0, netWeight = 0;
+            for (let index = 0; index < props.bucket.length; index++) {
+                totalPrice = totalPrice + props.bucket[index].totalPrice;
+                netWeight = netWeight + props.bucket[index].netWeight;
+            }
+            setWp({
+                price: totalPrice,
+                Weight: netWeight
+            })
+        }
     }, [props.bucket])
 
 
 
- 
-
-
     return (
-
-        props.bucket.length > 0 ? <TouchableOpacity style={styles.cart}  activeOpacity={0.9} onPress={() => props.navigation.navigate('Cart')}>
-            <Text style={{ color: '#fff' }}>{props.bucket.length} item.{}10 Kg.
-            <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />566</Text>
-            <View style={styles.rightcart} >
-                <Text style={{ color: '#fff', fontSize: 16 ,fontWeight:'bold' }}>View Cart </Text>
-                <MaterialCommunityIcons name='chevron-right' size={18} color={'#fff'} />
-            </View>
-        </TouchableOpacity> : null
+        props.bucket.length > 0 ?
+            <TouchableOpacity style={styles.cart} animation={'fadeInUp'} activeOpacity={0.9}
+                onPress={() => props.navigation.navigate('Cart')} >
+                <Text style={{ color: '#fff' }}>{props.bucket.length} item | 
+                <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />{wp.price + ' | ' + wp.Weight + ' Kg'}
+                </Text>
+                <View style={styles.rightcart} >
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>View Cart </Text>
+                    <MaterialCommunityIcons name='chevron-right' size={18} color={'#fff'} />
+                </View>
+            </TouchableOpacity> : null
 
     )
 }
 
 const mapStateToProps = state => {
     return {
-        bucket: state.bucket.item
+        bucket: state.bucket.item,
     }
 }
 
@@ -57,7 +67,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(AddCartContainer)
 
 const styles = StyleSheet.create({
     cart: {
-        padding: 5,
+        paddingHorizontal: 5,
+        paddingVertical: 15,
         backgroundColor: '#009c02',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -67,6 +78,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        padding: 10,
     },
 })

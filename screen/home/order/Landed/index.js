@@ -1,12 +1,12 @@
 import React from 'react'
-import { Text, View, TouchableOpacity, SafeAreaView, PermissionsAndroid } from 'react-native'
+import { Text, View, TouchableOpacity, SafeAreaView, PermissionsAndroid ,ScrollView} from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GoogleApiKey from '../../../config';
 import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
-import TopTapNavigator from '../../routes/topTapNavigator';
 import styles from './style';
 import { connect } from 'react-redux'
+import Grocery from '../grocery/component/index';
 
 
 const Index = (props) => {
@@ -83,7 +83,7 @@ const Index = (props) => {
             </View>
 
             <View style={styles.body}>
-                <TopTapNavigator />
+                <Grocery navigation={props.navigation}/>
             </View>
         </SafeAreaView>
 

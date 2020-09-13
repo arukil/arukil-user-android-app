@@ -65,22 +65,17 @@ class Grocery extends React.Component {
 
 
     rowRenderer = (type, data) => {
-        console.log(data.name)
         return (
             <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() =>
-                data.name !== 'Babycare' && data.name !== 'Beverage' ?
-
-                    this.props.navigation.navigate('Topbar', {
-                        data: data
-                    }) :
-                    this.props.navigation.navigate('Singlebar', {
-                        data: data
-                    })
-            }>
+                this.props.navigation.navigate(data.route, {
+                    data: data
+                })
+               }>
                 <View style={styles.innerCard}>
                     <Image source={{ uri: data.image }} resizeMode='contain' style={styles.listImage} />
                     <Text style={styles.listName} numberOfLines={2} >{data.name} </Text>
                 </View>
+
             </TouchableOpacity >
         )
     }
@@ -113,6 +108,7 @@ class Grocery extends React.Component {
                             {slider}
                         </Swiper>
                     </View>
+
                     <RecyclerListView
                         style={styles.body}
                         rowRenderer={this.rowRenderer}
@@ -122,7 +118,7 @@ class Grocery extends React.Component {
                             showsVerticalScrollIndicator: false,
                         }}
                     />
-                </View >
+                </View>
                 :
                 <View style={styles.loader}>
                     <ActivityIndicator size="large" color="#e91e63" />
@@ -175,9 +171,8 @@ const styles = StyleSheet.create({
         height: '90%',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        elevation: 1,
-        borderWidth: 1,
-        borderColor: '#fcfcfc'
+        borderWidth: 0.8,
+        borderColor: '#ddd',
     },
     listImage: {
         width: '80%',

@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import RecyclerListView from './recyclerview';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Image, FlatList } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { connect } from 'react-redux'
 import axios from 'axios';
-import Cart from '../helper/cart';
+import Cart from '../../helper/cart';
+import CartBtn from '../../helper/cartbtn';
 
 
 const selectedColor = '#fff';
@@ -19,28 +18,61 @@ class Topbar extends React.Component {
         this.state = {
             isLoading: true,
             list: [],
-            productType: "",
             selectedProduct: {},
             subLoading: true,
         };
     }
 
     async componentDidMount() {
-        console.log(this.props.route.params.data.name)
         await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.data.name}`)
             .then(response => {
                 const res = response.data.data;
-                return this.setState({ list: res });
+                return this.setState({
+                    list: res,
+                    selectedProduct: res[0],
+                    isLoading: false
+                });
             }).catch(error => {
                 console.log(error)
             })
 
-        await this.setState({ productType: this.state.list[0].name },
-            async () => {
-                var obj = await this.state.list.find(({ name }) => name === this.state.productType)
-                this.setState({ selectedProduct: obj, isLoading: false })
-            })
     }
+
+
+
+    renderItem = ({ item }) => {
+
+        const { name, available, image, flavour, type } = item;
+
+        return (
+            <View style={styles.listView}>
+                <Image source={{ uri: image }} resizeMode='center' style={styles.image} />
+                <View style={styles.listContent}>
+                    {!flavour ?
+                        <Text style={styles.listname} numberOfLines={1}>{name}</Text>
+                        :
+                        <Text style={{ color: '#4f4f4f' }} numberOfLines={1}>{flavour}</Text>
+                    }
+                    <View style={styles.subdiv}>
+                        <Text style={{ color: '#999' }}>{available[0].weight}</Text>
+                        <CartBtn
+                            data={{
+                                name: name,
+                                flavour: flavour ? flavour : '',
+                                image: image,
+                                available: available,
+                                type: type
+                            }} />
+                    </View>
+                    <Text style={styles.price}>
+                        <MaterialCommunityIcons name='currency-inr' size={15} color={'#000'} />
+                        {available[0].price}
+                    </Text>
+                </View>
+            </View>
+
+        )
+    };
 
 
     topbar = () => {
@@ -48,18 +80,19 @@ class Topbar extends React.Component {
             return (
                 <TouchableOpacity activeOpacity={1} style={[styles.productListTitle,
 
-                { backgroundColor: name === this.state.productType ? '#e4545f' : '#f9f9f9', marginLeft: index === 0 ? 0 : 10 }]}
+                { backgroundColor: name === this.state.selectedProduct.name ? '#e4545f' : '#f9f9f9', marginLeft: index === 0 ? 0 : 10 }]}
 
-                    onPress={() => this.setState({ productType: name }, () => {
-                        var obj = this.state.list.find(({ name }) => name === this.state.productType)
-                        this.setState({ subLoading: false }, () => {
-                            this.setState({ selectedProduct: obj, subLoading: true })
-                        })
-                    })} key={index}>
+                    onPress={() => this.state.selectedProduct.name !== name ? this.setState({
+                        selectedProduct: [],
+                    }, () => this.setState({ selectedProduct: this.state.list[index] })) : null}
+
+                    key={index}>
+
                     <Text numberOfLines={2} style={{
                         textAlign: 'center', fontSize: 12.5,
-                        color: this.state.productType === name ? selectedColor : unSelectedColor
+                        color: this.state.selectedProduct.name === name ? selectedColor : unSelectedColor
                     }}>{name}</Text>
+
                 </TouchableOpacity>
             )
         });
@@ -71,13 +104,13 @@ class Topbar extends React.Component {
         return (
             !this.state.isLoading ?
                 <View style={styles.container} >
-                    <View style={[styles.header, { height: '16%' }]}>
+                    <View style={[styles.header, { height: '8%' }]}>
 
-                        <TouchableOpacity activeOpacity={1} style={styles.searchBar}
+                        {/* <TouchableOpacity activeOpacity={1} style={styles.searchBar}
                             onPress={() => this.props.navigation.navigate('Search')}>
                             <MaterialCommunityIcons name='magnify' color={'#999'} size={18} />
                             <Text style={styles.searchBarText}>Search for an item...</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                         < View >
                             <ScrollView horizontal={true} >
@@ -87,8 +120,17 @@ class Topbar extends React.Component {
 
                     </View>
                     <View style={styles.body}>
-                        {Object.keys(this.state.selectedProduct).length > 1 && this.state.subLoading ?
-                            <RecyclerListView data={this.state.selectedProduct} /> : <ActivityIndicator size="large" color="#e91e63" />}
+                        {Object.keys(this.state.selectedProduct).length > 1 ?
+                            <FlatList
+                                data={this.state.selectedProduct.list}
+                                renderItem={this.renderItem}
+                                keyExtractor={(item, index) => index.toString()}
+                                initialNumToRender={5}
+                                showsVerticalScrollIndicator={false}
+                            />
+                            : null
+                        }
+
                     </View>
                     <Cart navigation={this.props.navigation} />
                 </View>
@@ -103,26 +145,8 @@ class Topbar extends React.Component {
 }
 
 
-const mapStateToProps = state => {
-    return {
-        item: state.personalcare.item,
-        help: state.personalcare.help
-    }
-}
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        ADD_PERSONALCARE: (data) => {
-            dispatch({ type: 'ADD_PERSONALCARE', data })
-        },
-        RESET_PERSONALCARE: () => {
-            dispatch({ type: 'RESET_PERSONALCARE' })
-        },
-    };
-
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Topbar)
+export default Topbar
 
 
 const styles = StyleSheet.create({
@@ -175,7 +199,53 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
-    }
+    },
+    listView: {
+        width: '100%',
+        height: 120,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        borderBottomWidth: 0.2,
+        borderColor: '#ddd',
+    },
+    listContent: {
+        width: '65%',
+        height: '80%',
+        justifyContent: 'space-around',
+    },
+    image: {
+        width: '25%',
+        height: '55%',
+        borderRadius: 5,
+        aspectRatio: 1
+    },
+    listname: {
+        width: '90%',
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#4f4f4f'
+    },
+    overlayBtn: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '70%',
+        padding: 4,
+        borderWidth: 0.25,
+        borderRadius: 5,
+    },
+    subdiv: {
+        width: '95%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    price: {
+        fontSize: 15,
+        fontWeight: '700',
+        color: '#5e5b54'
+    },
 
 });
 

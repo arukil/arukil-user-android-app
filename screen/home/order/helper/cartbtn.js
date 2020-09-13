@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import Counter from "react-native-counters";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -7,63 +7,77 @@ import { connect } from 'react-redux'
 
 function CartAddBtn(props) {
 
-    const item = props.data;
-
-    const [quantity, setQuantity] = React.useState(0)
-
-    React.useEffect(() => {
+    const [item] = React.useState(props.data);
 
 
-    }, [])
-
-    const selecterHandler = async (item, val) => {
-        console.log(props.bucket)
-        let obj = await props.bucket.find(({ name }) => name === item.name)
-        if (obj) {
-            console.log(obj.name + ' ' + obj.quantity)
-            await Object.assign(obj, { quantity: val });
-            if (obj.quantity === 0) {
-                props.REMOVE_FROM_BUCKET(obj)
+    const selecterHandler = async (item, val, index) => {
+        let arr = props.bucket;
+        if (index >= 0) {
+            var obj = props.bucket[index];
+            if (val === 0) {
+                return props.REMOVE_FROM_BUCKET(obj)
             }
-            return;
+            else {
+                arr[index] = {
+                    ...obj,
+                    quantity: val,
+                    totalPrice: obj.price * val,
+                    netWeight: item.available[0].calculate * val
+                }
+                return props.UPDATE_TO_BUCKET(arr)
+            }
         }
         else {
-            await props.ADD_TO_BUCKET({
-                brand: item.brand ? item.brand : '',
+            const insertToBucket = {
                 name: item.name,
+                flavour: item.flavour,
                 image: item.image,
                 quantity: val,
                 price: item.available[0].price,
                 weight: item.available[0].weight,
-                type: item.type
-            })
+                netWeight: item.available[0].calculate,
+                totalPrice: item.available[0].price,
+                type: item.type,
+                calculate: item.available[0].calculate
+            }
+            await props.ADD_TO_BUCKET(insertToBucket);
             return;
         }
     }
 
-    return (
 
-        !props.bucket.find(({ name, brand }) => name === item.name && brand === item.brand) ?
-            <TouchableOpacity activeOpacity={1} onPress={() => selecterHandler(item, 1)} style={styles.btnContainer}>
+    const button = () => {
+
+        const index = props.bucket.findIndex(({ image }) => image === item.image);
+
+        if (index >= 0) {
+            
+            return <Counter
+                min={0}
+                onChange={(val) => selecterHandler(item, val, index)}
+                start={1}
+                max={5}
+            />
+        }
+
+        else {
+            return <TouchableOpacity activeOpacity={1} onPress={() => selecterHandler(item, 1, index)} style={styles.btnContainer}>
                 <View style={styles.button}>
                     <Text style={{ fontSize: 10, color: '#e91e63' }}>ADD</Text>
                     <MaterialCommunityIcons name='plus' color={'#e91e63'} />
                 </View>
             </TouchableOpacity>
-            :
-            <Counter
-                min={0}
-                onChange={(val) => selecterHandler(item, val)}
-                start={1}
-                max={5}
-            />
-    )
+        }
+    }
+
+
+    return button();
 }
 
 
 const mapStateToProps = state => {
     return {
-        bucket: state.bucket.item
+        bucket: state.bucket.item,
     }
 }
 
@@ -72,9 +86,12 @@ const mapDispatchToProps = (dispatch) => {
         ADD_TO_BUCKET: (data) => {
             dispatch({ type: 'ADD_TO_BUCKET', data })
         },
+        UPDATE_TO_BUCKET: (data) => {
+            dispatch({ type: 'UPDATE_TO_BUCKET', data })
+        },
         REMOVE_FROM_BUCKET: (data) => {
             dispatch({ type: 'REMOVE_FROM_BUCKET', data })
-        }
+        },
     };
 }
 
@@ -90,13 +107,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         alignItems: 'center',
         flexDirection: 'row',
-        width: 80,
-        height: 28,
-        borderWidth: 0.5,
+        width: 85,
+        height: 32,
+        borderWidth: 0.4,
+        borderTopWidth: 0.9,
         borderRadius: 5,
         borderColor: '#ddd',
         backgroundColor: '#ffffff',
-        elevation: 1,
+        elevation: 1
     },
 
 })
+
