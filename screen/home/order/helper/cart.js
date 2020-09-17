@@ -14,7 +14,7 @@ function AddCartContainer(props) {
                 totalPrice = totalPrice + props.bucket[index].totalPrice;
                 totalWeight = totalWeight + props.bucket[index].netWeight;
             }
-            totalWeight = totalWeight.toFixed(1);
+            totalWeight = totalWeight.toFixed(2);
             return props.TOTAL_WEIGHT_PRICE({
                 totalPrice,
                 totalWeight,
