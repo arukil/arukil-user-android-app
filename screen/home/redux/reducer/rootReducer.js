@@ -1,5 +1,5 @@
 import {locationReducer ,userLocationReducer} from './location'
-import { bucket , totalPrice} from './cart';
+import { bucket , twp} from './cart';
 import {combineReducers} from 'redux'
 import { personalcare } from './grocery';
 
@@ -9,7 +9,7 @@ const RootReducer=combineReducers({
     userLocationReducer:userLocationReducer,
     personalcare:personalcare,
     bucket:bucket,
-    totalPrice:totalPrice
+    twp:twp
 
 })
 

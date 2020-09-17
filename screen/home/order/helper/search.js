@@ -9,17 +9,16 @@ function Search(props) {
     const [textInput, setTextInput] = React.useState('');
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.search} activeOpacity={0.7}>
-                <MaterialCommunityIcons name='arrow-left' size={24} style={styles.searchIcon}  onPress={()=>props.navigation.pop()}/>
-                <TextInput placeholder='Search...' style={styles.InputField}
+        <SafeAreaView style={styles.container}>   
+          <View style={styles.search} activeOpacity={0.7}>
+                <MaterialCommunityIcons name='magnify' size={20} style={styles.searchIcon} />
+                <TextInput placeholder='search for your loctaion...' style={styles.InputField}
                     onChangeText={(text) => setTextInput(text)}
                     value={textInput}
-                    autoFocus={true}
                 />
                 {textInput.length > 0 ?
                     <TouchableOpacity activeOpacity={0.7} onPress={() => setTextInput('')}>
-                        <MaterialCommunityIcons name='close' size={20} color={'#999'} />
+                        <MaterialCommunityIcons name='close' size={20} style={styles.searchIcon} />
                     </TouchableOpacity>
                     : null}
             </View>
@@ -37,6 +36,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fcfcfc',
+        paddingHorizontal:10
      },
     search: {
         borderBottomWidth: 0.35,

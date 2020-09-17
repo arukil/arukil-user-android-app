@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import GoogleApiKey from '../../../config';
+import {GoogleApiKey} from '../../../config';
 import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux'
@@ -117,10 +117,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fcfcfc',
         paddingHorizontal: 10,
-        paddingVertical: 15,
     },
     search: {
-        marginTop: 30,
         borderWidth: 0.35,
         borderColor: '#999',
         flexDirection: 'row',

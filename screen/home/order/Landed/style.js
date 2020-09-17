@@ -6,42 +6,32 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
     },
-    header: {
-        width: '100%',
-        height: 55,
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#ffffff',
-        borderBottomWidth: 1.5,
-        borderColor: '#f5f5f5',
-    },
     location: {
-        marginLeft: 5,
-        width: '65%',
+        width: '340%',
         flexDirection: 'row',
         alignItems: 'center',
+        marginLeft:-8,
     },
     locationTextContainer: {
         flexDirection: 'column',
+        borderBottomWidth:0.4,
+        borderColor:'#ddd'
     },
     primaryLocationText: {
-        fontWeight: '700'
+        fontWeight: '700',
+        color:'#4f4f4f',
     },
     SecondaryLocationText: {
         color: '#999',
         fontSize: 12,
+        paddingBottom:5,
     },
-    search: {
-        padding: 10,
-        paddingRight: 15,
-        borderTopLeftRadius: 10,
-        borderBottomLeftRadius: 10,
-        elevation: 1
+    changeLocation: {
+        padding: 5,
     },
-
     body: {
         flex: 1,
+        paddingHorizontal:10
     },
 
 })

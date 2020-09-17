@@ -1,19 +1,10 @@
 import React from 'react';
-import { SafeAreaView, TouchableOpacity, FlatList, StyleSheet, Text, Dimensions, Image, ActivityIndicator, View } from 'react-native';
+import { TouchableOpacity, FlatList, StyleSheet, Text, Dimensions, Image, ActivityIndicator, View } from 'react-native';
 import Swiper from 'react-native-swiper'
 import axios from 'axios'
-import { RecyclerListView, DataProvider, LayoutProvider } from 'recyclerlistview';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { connect } from 'react-redux'
-
 
 const SCREEN_WIDTH = (Dimensions.get('window').width - 20) / 3;
-const SCREEN_HEIGHT = (Dimensions.get('window').height / 4.5);
-
-
-const dataProvider = new DataProvider((r1, r2) => {
-    return r1 !== r2;
-});
+const SCREEN_HEIGHT = (Dimensions.get('window').height / 5.20);
 
 const offerImage = [
     'https://arukil.s3.ap-south-1.amazonaws.com/offercard/Offer-01-01+(1).jpg',
@@ -26,37 +17,19 @@ class Grocery extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
-            list: dataProvider.cloneWithRows({}),
+            list: [],
         };
-        this.layoutProvider = new LayoutProvider();
     }
 
-    _layoutHandler() {
-        this.setState({ isLoading: false });
-        this.layoutProvider = new LayoutProvider((i) => {
-            return this.state.list.getDataForIndex(i).type;
-        }, (type, dim) => {
-            switch (type) {
-                case 'GROCERY':
-                    dim.width = SCREEN_WIDTH,
-                        dim.height = SCREEN_HEIGHT;
-                    break;
-                default:
-                    dim.width = 0;
-                    dim.height = 0;
-                    break;
-            };
-        })
-    }
 
     async componentDidMount() {
-
         await axios.get('https://arukil.herokuapp.com/api/products/grocery')
             .then(response => {
                 const res = response.data.data;
                 return this.setState({
-                    list: dataProvider.cloneWithRows(res),
-                }, this._layoutHandler());
+                    list: res,
+                    isLoading: false
+                });
             }).catch(error => {
                 console.log(error)
             })
@@ -64,16 +37,16 @@ class Grocery extends React.Component {
 
 
 
-    rowRenderer = (type, data) => {
+    renderItem = ({ item }) => {
         return (
             <TouchableOpacity activeOpacity={0.7} style={styles.card} onPress={() =>
-                this.props.navigation.navigate(data.route, {
-                    data: data
+                this.props.navigation.navigate(item.route, {
+                    item: item
                 })
-               }>
+            }>
                 <View style={styles.innerCard}>
-                    <Image source={{ uri: data.image }} resizeMode='contain' style={styles.listImage} />
-                    <Text style={styles.listName} numberOfLines={2} >{data.name} </Text>
+                    <Image source={{ uri: item.image }} resizeMode='contain' style={styles.listImage} />
+                    <Text style={styles.listName} numberOfLines={2} >{item.name} </Text>
                 </View>
 
             </TouchableOpacity >
@@ -94,11 +67,8 @@ class Grocery extends React.Component {
         )
 
         return (
-
-
             !this.state.isLoading ?
                 <View style={styles.container} >
-
                     <View style={styles.sliderContainer}>
                         <Swiper
                             activeDotColor={'#e91e63'}
@@ -108,15 +78,13 @@ class Grocery extends React.Component {
                             {slider}
                         </Swiper>
                     </View>
-
-                    <RecyclerListView
+                    <FlatList
                         style={styles.body}
-                        rowRenderer={this.rowRenderer}
-                        dataProvider={this.state.list}
-                        layoutProvider={this.layoutProvider}
-                        scrollViewProps={{
-                            showsVerticalScrollIndicator: false,
-                        }}
+                        data={this.state.list}
+                        renderItem={this.renderItem}
+                        keyExtractor={(item, index) => index.toString()}
+                        showsVerticalScrollIndicator={false}
+                        numColumns={3}
                     />
                 </View>
                 :
@@ -130,12 +98,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingHorizontal: 10,
-        paddingVertical: 10
     },
     sliderContainer: {
-        height: 148,
-        width: '100%',
+        flex: 0.37,
         justifyContent: 'center',
         alignSelf: 'center',
     },
@@ -158,13 +123,14 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
-        paddingVertical: 15
+        paddingTop: 5,
     },
     card: {
-        width: '100%',
-        height: '95%',
-        flexWrap: 'wrap',
-        alignContent: 'center'
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     innerCard: {
         width: '90%',
@@ -188,6 +154,11 @@ const styles = StyleSheet.create({
 });
 
 export default Grocery;
+
+
+
+
+
 
 
 

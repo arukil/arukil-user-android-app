@@ -57,21 +57,36 @@ function StackNavigator() {
                 }}
                 />
 
-
-
                 <Stack.Screen name="Search" component={Search} options={{
-                    headerShown: false,
+                    headerShown: true,
+                    title:false,
+                    headerStyle: {
+                        elevation: 0,
+                    },
                 }}
                 />
                 <Stack.Screen name="Cart" component={Cart} options={{
-                    headerShown: false,
+                    headerShown: true,
+                    title:'Confirm order',
+                    headerTitleStyle: {
+                        fontSize: 15,
+                        fontWeight: '700',
+                        color: '#5e5b54',
+                    },
+                    headerStyle: {
+                        elevation: 0,
+                        borderBottomWidth:0.3
+
+                    },
 
                 }}
                 />
                 <Stack.Screen name="GetLocation" component={GetLocation} options={{
                     headerShown: true,
-                    headerTransparent: true,
-                    title: false
+                    title:false,
+                    headerStyle: {
+                        elevation: 0,
+                    },
                 }}
                 />
                 <Stack.Screen name="Map" component={Map} options={{

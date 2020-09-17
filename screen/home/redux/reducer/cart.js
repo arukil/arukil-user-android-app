@@ -12,7 +12,7 @@ export function bucket(state = initialBucketState, action) {
         item: [...state.item, action.data]
       }
     case 'UPDATE_TO_BUCKET':
-      const index = state.item.findIndex( en => en.image === action.data.image);
+      const index = state.item.findIndex(en => en.image === action.data.image);
       const newArray = [...state.item]
       newArray[index] = action.data;
       return {
@@ -37,15 +37,15 @@ export function bucket(state = initialBucketState, action) {
 }
 
 
-const initialTotalPriceState = {
-  totalPrice: 0,
+const initialTotalPWState = {
+  pw:{}
 }
 
-export function totalPrice(state = initialTotalPriceState, action) {
+export function twp(state = initialTotalPWState, action) {
   switch (action.type) {
-    case 'TOTAL_PRICE':
+    case 'TOTAL_WEIGHT_PRICE':
       return {
-        totalPrice: action.data
+        pw: action.data
       }
     default:
       return state;

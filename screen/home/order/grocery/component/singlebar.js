@@ -12,7 +12,7 @@ class Singlebar extends React.Component {
 
     constructor(props) {
         super(props)
-        props.navigation.setOptions({ title: props.route.params.data.name })
+        props.navigation.setOptions({ title: props.route.params.item.name })
         this.state = {
             isLoading: true,
             list: [],
@@ -21,7 +21,7 @@ class Singlebar extends React.Component {
     }
 
     async componentDidMount() {
-        await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.data.name}`)
+        await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.item.name}`)
             .then(response => {
                 const res = response.data.data;
                 return this.setState({

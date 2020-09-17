@@ -49,24 +49,23 @@ function CartAddBtn(props) {
     const button = () => {
 
         const index = props.bucket.findIndex(({ image }) => image === item.image);
-
         if (index >= 0) {
-            
-            return <Counter
-                min={0}
-                onChange={(val) => selecterHandler(item, val, index)}
-                start={1}
-                max={5}
-            />
+            return (
+                <Counter
+                    min={0}
+                    onChange={(val) => selecterHandler(item, val, index)}
+                    start={1}
+                    max={5}
+                />
+            )
         }
-
         else {
-            return <TouchableOpacity activeOpacity={1} onPress={() => selecterHandler(item, 1, index)} style={styles.btnContainer}>
-                <View style={styles.button}>
-                    <Text style={{ fontSize: 10, color: '#e91e63' }}>ADD</Text>
-                    <MaterialCommunityIcons name='plus' color={'#e91e63'} />
-                </View>
-            </TouchableOpacity>
+            return (
+                <TouchableOpacity style={styles.button} activeOpacity={1} onPress={() => selecterHandler(item, 1, index)}>
+                    <Text style={{ fontSize: 10, color: '#e91e63', fontWeight: 'bold' }}>ADD</Text>
+                    <MaterialCommunityIcons name='plus' color={'#e91e63'} size={12} />
+                </TouchableOpacity>
+            )
         }
     }
 
@@ -109,12 +108,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: 85,
         height: 32,
-        borderWidth: 0.4,
+        borderWidth: 1,
         borderTopWidth: 0.9,
         borderRadius: 5,
         borderColor: '#ddd',
         backgroundColor: '#ffffff',
-        elevation: 1
     },
 
 })

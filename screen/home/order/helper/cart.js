@@ -6,37 +6,33 @@ import * as Animation from 'react-native-animatable';
 
 function AddCartContainer(props) {
 
-    const [wp, setWp] = React.useState({
-        price: 0,
-        Weight: 0
-    });
 
     React.useEffect(() => {
+        var totalPrice = 0, totalWeight = 0;
         if (props.bucket.length > 0) {
-            var totalPrice = 0, netWeight = 0;
             for (let index = 0; index < props.bucket.length; index++) {
                 totalPrice = totalPrice + props.bucket[index].totalPrice;
-                netWeight = netWeight + props.bucket[index].netWeight;
+                totalWeight = totalWeight + props.bucket[index].netWeight;
             }
-            setWp({
-                price: totalPrice,
-                Weight: netWeight
+            totalWeight = totalWeight.toFixed(1);
+            return props.TOTAL_WEIGHT_PRICE({
+                totalPrice,
+                totalWeight,
             })
         }
     }, [props.bucket])
-
 
 
     return (
         props.bucket.length > 0 ?
             <TouchableOpacity style={styles.cart} animation={'fadeInUp'} activeOpacity={0.9}
                 onPress={() => props.navigation.navigate('Cart')} >
-                <Text style={{ color: '#fff' }}>{props.bucket.length} item | 
-                <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />{wp.price + ' | ' + wp.Weight + ' Kg'}
+                <Text style={{ color: '#fff', fontWeight: '700' }}>{props.bucket.length} item |
+                <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />{props.twp.totalPrice + ' | ' + props.twp.totalWeight + ' Kg'}
                 </Text>
                 <View style={styles.rightcart} >
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800' }}>View Cart </Text>
-                    <MaterialCommunityIcons name='chevron-right' size={18} color={'#fff'} />
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>View Cart </Text>
+                    <MaterialCommunityIcons name='chevron-right' size={20} color={'#fff'} />
                 </View>
             </TouchableOpacity> : null
 
@@ -46,6 +42,7 @@ function AddCartContainer(props) {
 const mapStateToProps = state => {
     return {
         bucket: state.bucket.item,
+        twp: state.twp.pw
     }
 }
 
@@ -57,7 +54,10 @@ const mapDispatchToProps = (dispatch) => {
         },
         BUCKET_RESET: () => {
             dispatch({ type: 'BUCKET_RESET' })
-        }
+        },
+        TOTAL_WEIGHT_PRICE: (data) => {
+            dispatch({ type: 'TOTAL_WEIGHT_PRICE', data })
+        },
 
     };
 }

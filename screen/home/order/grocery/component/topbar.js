@@ -9,12 +9,11 @@ import CartBtn from '../../helper/cartbtn';
 const selectedColor = '#fff';
 const unSelectedColor = '#757575';
 
-
 class Topbar extends React.Component {
 
     constructor(props) {
         super(props)
-        props.navigation.setOptions({ title: props.route.params.data.name })
+        props.navigation.setOptions({ title: props.route.params.item.name })
         this.state = {
             isLoading: true,
             list: [],
@@ -24,7 +23,7 @@ class Topbar extends React.Component {
     }
 
     async componentDidMount() {
-        await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.data.name}`)
+        await axios.get(`https://arukil.herokuapp.com/api/products/${this.props.route.params.item.name}`)
             .then(response => {
                 const res = response.data.data;
                 return this.setState({
@@ -37,6 +36,9 @@ class Topbar extends React.Component {
             })
 
     }
+
+
+
 
 
 
@@ -70,24 +72,16 @@ class Topbar extends React.Component {
                     </Text>
                 </View>
             </View>
-
         )
     };
-
 
     topbar = () => {
         return this.state.list.map(({ name }, index) => {
             return (
                 <TouchableOpacity activeOpacity={1} style={[styles.productListTitle,
-
                 { backgroundColor: name === this.state.selectedProduct.name ? '#e4545f' : '#f9f9f9', marginLeft: index === 0 ? 0 : 10 }]}
-
-                    onPress={() => this.state.selectedProduct.name !== name ? this.setState({
-                        selectedProduct: [],
-                    }, () => this.setState({ selectedProduct: this.state.list[index] })) : null}
-
-                    key={index}>
-
+                    onPress={() => this.setState({ selectedProduct: this.state.list[index] })}
+                    key={index} >
                     <Text numberOfLines={2} style={{
                         textAlign: 'center', fontSize: 12.5,
                         color: this.state.selectedProduct.name === name ? selectedColor : unSelectedColor
@@ -96,39 +90,30 @@ class Topbar extends React.Component {
                 </TouchableOpacity>
             )
         });
-
     }
-
-
     render() {
         return (
             !this.state.isLoading ?
                 <View style={styles.container} >
                     <View style={[styles.header, { height: '8%' }]}>
-
-                        {/* <TouchableOpacity activeOpacity={1} style={styles.searchBar}
-                            onPress={() => this.props.navigation.navigate('Search')}>
-                            <MaterialCommunityIcons name='magnify' color={'#999'} size={18} />
-                            <Text style={styles.searchBarText}>Search for an item...</Text>
-                        </TouchableOpacity> */}
-
-                        < View >
-                            <ScrollView horizontal={true} >
-                                {this.topbar()}
-                            </ScrollView>
-                        </View>
-
+                        <ScrollView horizontal={true} >
+                            {this.topbar()}
+                        </ScrollView>
                     </View>
                     <View style={styles.body}>
                         {Object.keys(this.state.selectedProduct).length > 1 ?
-                            <FlatList
-                                data={this.state.selectedProduct.list}
-                                renderItem={this.renderItem}
-                                keyExtractor={(item, index) => index.toString()}
-                                initialNumToRender={5}
-                                showsVerticalScrollIndicator={false}
-                            />
-                            : null
+                            (
+                                <FlatList
+                                    data={this.state.selectedProduct.list}
+                                    renderItem={this.renderItem}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    initialNumToRender={5}
+                                    showsVerticalScrollIndicator={false}
+                                    key={this.state.selectedProduct.list}
+                                />
+                            )
+                            :
+                            (null)
                         }
 
                     </View>
@@ -138,8 +123,6 @@ class Topbar extends React.Component {
                 <View style={styles.loader}>
                     <ActivityIndicator size="large" color="#e91e63" />
                 </View>
-
-
         );
     }
 }
@@ -168,7 +151,7 @@ const styles = StyleSheet.create({
 
     },
     searchBar: {
-
+        
         borderWidth: 0.2,
         padding: 10,
         borderColor: '#f5f5f5',
