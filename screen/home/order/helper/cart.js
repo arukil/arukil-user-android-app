@@ -6,8 +6,8 @@ import * as Animation from 'react-native-animatable';
 
 function AddCartContainer(props) {
 
-
     React.useEffect(() => {
+
         var totalPrice = 0, totalWeight = 0;
         if (props.bucket.length > 0) {
             for (let index = 0; index < props.bucket.length; index++) {
@@ -20,10 +20,12 @@ function AddCartContainer(props) {
                 totalWeight,
             })
         }
+
     }, [props.bucket])
 
 
     return (
+
         props.bucket.length > 0 ?
             <TouchableOpacity style={styles.cart} animation={'fadeInUp'} activeOpacity={0.9}
                 onPress={() => props.navigation.navigate('Cart')} >
@@ -34,8 +36,9 @@ function AddCartContainer(props) {
                     <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>View Cart </Text>
                     <MaterialCommunityIcons name='chevron-right' size={20} color={'#fff'} />
                 </View>
-            </TouchableOpacity> : null
-
+            </TouchableOpacity>
+            :
+            null
     )
 }
 

@@ -16,12 +16,12 @@ const Index = (props) => {
         Object.keys(props.location).length > 0 && Object.keys(props.userLocation).length === 0 ?
             props.USER_CURRENT_LOCATION(props.location) : null;
     }, [props.location]);
-
+    
 
     const geocoder = async (latitude, longitude) => {
         await Geocoder.init(GoogleApiKey)
         await Geocoder.from(latitude, longitude)
-            .then(json => {
+            .then(json => {  
                 var addressComponent = json.results[0];
                 props.GET_LOCATION(addressComponent)
                 return;
@@ -29,45 +29,40 @@ const Index = (props) => {
             .catch(error => console.log(error));
     }
 
-    const _getLocation = async () => {
-        const chckLocationPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-        if (chckLocationPermission) {
-            await Geolocation.getCurrentPosition(pos => { return geocoder(pos.coords.latitude, pos.coords.longitude) },
-                err => { alert("Fetching the Position failed, please check location is enable!"); },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 1000 }
-            );
-        }
-        else {
-            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    'title': ' Arukil App required Location permission',
-                    'message': 'We required Location permission in order to get device location ' +
-                        'Please grant us.'
+    React.useEffect(() => {
+
+        const _getLocation = async () => {
+
+            const chckLocationPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            if (chckLocationPermission) {
+                await Geolocation.getCurrentPosition(pos => { return geocoder(pos.coords.latitude, pos.coords.longitude) },
+                    err => { alert("Fetching the Position failed, please check location is enable!"); },
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 1000 }
+                );
+            }
+            else {
+                const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    return getLocation();
+                } else {
+                    alert("You don't have access for the location");
                 }
-            )
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                return getLocation();
-            } else {
-                alert("You don't have access for the location");
             }
         }
-    }
-
-    React.useEffect(() => {
         _getLocation();
+        
     }, []);
 
 
-
     return (
-
         <SafeAreaView style={styles.container}>
             <Header
                 containerStyle={{
                     backgroundColor: '#ffffff',
                     justifyContent: 'space-between',
-                    borderBottomWidth: 0,
+                    borderBottomWidth: 1,
                 }}
+
                 leftComponent={
                     <View activeOpacity={0.7} style={styles.location}>
                         <MaterialCommunityIcons name='map-marker' color={'#e91e63'} size={30} />
@@ -92,8 +87,8 @@ const Index = (props) => {
             <View style={styles.body}>
                 <Grocery navigation={props.navigation} />
             </View>
-        </SafeAreaView>
 
+        </SafeAreaView>
     )
 }
 

@@ -3,8 +3,13 @@ import { StyleSheet, Text, View, Image } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { AuthContext } from '../../../authContext';
+
+
 
 export default function Index() {
+    const {signOut} =React.useContext(AuthContext);
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -12,7 +17,7 @@ export default function Index() {
                     <Text style={styles.name}>SURYA</Text>
                     <Text style={styles.phonenumber}>8765432189</Text>
                 </View>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity activeOpacity={0.7} onPress={()=>signOut()}>
                     <Text style={styles.editOption}>edit</Text>
                 </TouchableOpacity>
             </View>

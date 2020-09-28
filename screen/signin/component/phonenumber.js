@@ -65,7 +65,7 @@ const phonenumberSignin = (props) => {
                     </TouchableOpacity>
                 </View>
             <Overlay isVisible={visible}>
-                <ActivityIndicator size={'large'} color='#e91e63' />
+                <ActivityIndicator size={'large'} color='#999' />
             </Overlay>
         </View>
     );
@@ -85,12 +85,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 18,
         justifyContent:'space-between'
     },
-    body: {
-        flex: 0.5,
-        justifyContent: 'space-between',
-    },
+    
     header: {
-        flex: 0.33,
+        height:100,
         justifyContent: 'space-between',
     },
     Title: {
@@ -109,7 +106,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     footer: {
-        flex: 0.2,
+        height:100,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

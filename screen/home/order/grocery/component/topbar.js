@@ -5,13 +5,13 @@ import axios from 'axios';
 import Cart from '../../helper/cart';
 import CartBtn from '../../helper/cartbtn';
 
-
 const selectedColor = '#fff';
 const unSelectedColor = '#757575';
 
 class Topbar extends React.Component {
 
     constructor(props) {
+
         super(props)
         props.navigation.setOptions({ title: props.route.params.item.name })
         this.state = {
@@ -19,6 +19,7 @@ class Topbar extends React.Component {
             list: [],
             selectedProduct: {},
             subLoading: true,
+
         };
     }
 
@@ -34,18 +35,11 @@ class Topbar extends React.Component {
             }).catch(error => {
                 console.log(error)
             })
-
     }
 
 
-
-
-
-
     renderItem = ({ item }) => {
-
         const { name, available, image, flavour, type } = item;
-
         return (
             <View style={styles.listView}>
                 <Image source={{ uri: image }} resizeMode='center' style={styles.image} />
@@ -151,7 +145,7 @@ const styles = StyleSheet.create({
 
     },
     searchBar: {
-        
+
         borderWidth: 0.2,
         padding: 10,
         borderColor: '#f5f5f5',
@@ -174,11 +168,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 5,
-
     },
     productListTitleText: {
         fontSize: 10,
-
     },
     body: {
         flex: 1,

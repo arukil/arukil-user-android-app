@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
     },
     locationTextContainer: {
         flexDirection: 'column',
-        borderBottomWidth:0.4,
         borderColor:'#ddd'
     },
     primaryLocationText: {

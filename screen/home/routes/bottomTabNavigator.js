@@ -28,7 +28,7 @@ export default function BottomTabNavigator() {
                     ),
                 }}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 name="Nearby"
                 component={Nearby}
                 options={{
@@ -49,7 +49,7 @@ export default function BottomTabNavigator() {
                         <MaterialCommunityIcons name="history" color={focused ? color : '#999'} size={26} />
                     ),
                 }}
-            />
+            /> */}
             <Tab.Screen
                 name="Account"
                 component={Account}

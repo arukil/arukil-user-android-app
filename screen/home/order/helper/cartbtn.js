@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import Counter from "react-native-counters";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
+import NumericInput from 'react-native-numeric-input'
 
 
 function CartAddBtn(props) {
@@ -56,6 +57,7 @@ function CartAddBtn(props) {
                     onChange={(val) => selecterHandler(item, val, index)}
                     start={1}
                     max={5}
+        
                 />
             )
         }

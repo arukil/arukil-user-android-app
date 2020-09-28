@@ -10,8 +10,6 @@ const Stack = createStackNavigator();
 function StackNavigator() {
     return (
 
-        <NavigationContainer>
-
             <Stack.Navigator screenOptions={{
                 headerShown: true,
     
@@ -28,7 +26,8 @@ function StackNavigator() {
                     headerShown: true,
                     headerStyle:{
                         borderWidth:0,
-                        elevation:0
+                        elevation:0,
+                        backgroundColor:'#fcfcfc'
                     }
                     
                 }}
@@ -46,7 +45,6 @@ function StackNavigator() {
 
 
             </Stack.Navigator>
-        </NavigationContainer>
     )
 };
 

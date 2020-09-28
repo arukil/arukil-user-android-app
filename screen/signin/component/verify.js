@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button, Overlay } from 'react-native-elements';
+import {  Overlay } from 'react-native-elements';
 import axios from 'axios'
+import { AuthContext } from '../../authContext';
+
 const Verify = (props) => {
 
     const [code, setCode] = useState(0);
     const [visible, setVisible] = useState(false);
-
+    const { signIn } = React.useContext(AuthContext);
+    const [resender, setResender] = React.useState(true);
 
     const onSubmit = async (code) => {
 
@@ -30,15 +33,11 @@ const Verify = (props) => {
                         code: code,
                     }
                 };
-                let response = await axios(data);
-                let res =await response.data;
-                console.log(res)
+                let response = await axios(data); 
+                let res = response.data;
                 if (res.status) {
-                    setVisible(false)
-                    // return props.navigation.navigate('Verify', {
-                    //     phonenumber: phonenumber,
-                    // });
-                    console.log(res)
+                    setVisible(false);
+                    signIn(res.token);
                 }
                 else {
                     setVisible(false)
@@ -53,38 +52,42 @@ const Verify = (props) => {
 
     }
 
+    React.useEffect(() => {
 
+        setTimeout((t) => {
+            setResender(false)
+        }, 10000);
+
+    }, [])
 
     return (
 
         <View style={styles.container}>
-            <View style={styles.body}>
 
-                <View style={styles.header}>
-                    <Text style={styles.title}>Please enter the 4-digit code sent to you </Text>
-                    <OTPInputView
-                        style={{ width: '70%', height: 40 }}
-                        pinCount={4}
-                        autoFocusOnLoad={true}
-                        keyboardType='number-pad'
-                        codeInputFieldStyle={styles.codeInputFieldStyle}
-                        codeInputHighlightStyle={{ borderColor: "#000", backgroundColor: '#fff' }}
-                        onCodeFilled={(code) => onSubmit(code)}
-                        onCodeChanged={code => setCode(code)}
-                    />
-                </View>
+            <View style={styles.header}>
+                <Text style={styles.title}>Please enter the 4-digit code sent to you </Text>
+                <OTPInputView
+                    style={{ width: '70%', height: 40 }}
+                    pinCount={4}
+                    autoFocusOnLoad={true}
+                    keyboardType='number-pad'
+                    codeInputFieldStyle={styles.codeInputFieldStyle}
+                    codeInputHighlightStyle={{ borderColor: "#000", backgroundColor: '#fff' }}
+                    onCodeFilled={(code) => onSubmit(code)}
+                    onCodeChanged={code => setCode(code)}
+                />
             </View>
 
             <View style={styles.footer}>
-                <TouchableOpacity activeOpacity={0.8} >
-                    <Text style={styles.resend}>I didn't receive a code</Text>
+                <TouchableOpacity activeOpacity={0.8} disabled={resender} onPress={() => console.log('jsd')}>
+                    <Text style={[styles.resend ,{color:resender?'#999':'#2e69d9'}]}>I didn't receive a code ?<Text style={{ textDecorationLine: 'underline' }}> resend </Text></Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.8} onPress={() => onSubmit(code)} style={styles.button}>
                     <MaterialCommunityIcons name={'arrow-right'} size={25} color={'#fff'} />
                 </TouchableOpacity>
             </View>
             <Overlay isVisible={visible}>
-                <ActivityIndicator size={'large'} color='#e91e63' />
+                <ActivityIndicator size={'large'} color='#999' />
             </Overlay>
         </View>
 
@@ -101,22 +104,19 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
         paddingHorizontal: 15,
+        justifyContent: 'space-between'
 
     },
     header: {
-        flex: 0.5,
-        justifyContent: 'space-between',
-    },
-    body: {
-        flex: 0.4,
+        height: 120,
         justifyContent: 'space-between',
     },
     title: {
-        color: '#000',
+        color: '#383232',
         fontSize: 20,
     },
     footer: {
-        flex: 0.1,
+        height: 100,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -126,6 +126,8 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         color: '#000',
+        borderWidth: 0,
+        borderBottomWidth: 2
     },
     resend: {
         color: '#2e69d9',
@@ -133,7 +135,6 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     button: {
-
         width: 60,
         height: 60,
         borderRadius: 50,

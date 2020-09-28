@@ -123,13 +123,13 @@ const styles = StyleSheet.create({
         width: '25%',
         height: '55%',
         borderRadius: 5,
-        aspectRatio: 1
+        aspectRatio: 1,
+    
     },
     listname: {
         width: '90%',
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#4f4f4f'
+        fontSize: 15,
+        color: '#4f4f4f',
     },
     overlayBtn: {
         flexDirection: 'row',
