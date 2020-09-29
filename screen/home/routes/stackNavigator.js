@@ -1,10 +1,10 @@
-import React from 'react'
+import React from 'react';
+import {TouchableOpacity} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import BottomTabNavigator from './bottomTabNavigator';
-import Topbar from '../order/grocery/component/topbar';
-import Singlebar from '../order/grocery/component/singlebar';
+import ListView from '../order/grocery/component/listView';
 import Search from '../order/helper/search';
 import GetLocation from '../region/component/getLocation';
 import Map from '../region/component/map';
@@ -25,7 +25,8 @@ function StackNavigator() {
                 headerShown: false
             }}
             />
-            <Stack.Screen name="Topbar" component={Topbar} options={{
+
+            <Stack.Screen name="ListView" component={ListView} options={{
                 headerTransparent: false,
                 headerTitleStyle: {
                     fontSize: 16,
@@ -35,24 +36,7 @@ function StackNavigator() {
                 headerStyle: {
                     elevation: 0,
                 },
-                headerRight: () => (
-                    <MaterialCommunityIcons name='magnify' color={'#999'} size={30} style={{ paddingRight: 10 }} />
-                )
-            }}
-            />
-            <Stack.Screen name="Singlebar" component={Singlebar} options={{
-                headerTransparent: false,
-                headerTitleStyle: {
-                    fontSize: 16,
-                    fontWeight: '700',
-                    color: '#5e5b54'
-                },
-                headerStyle: {
-                    elevation: 0,
-                },
-                headerRight: () => (
-                    <MaterialCommunityIcons name='magnify' color={'#999'} size={30} style={{ paddingRight: 10 }} />
-                )
+              
             }}
             />
 
@@ -73,7 +57,7 @@ function StackNavigator() {
                     fontWeight: '700',
                     color: '#5e5b54',
                 },
-                headerStyle: {                   
+                headerStyle: {
                     elevation: 0,
                     borderBottomWidth: 0.3
                 },

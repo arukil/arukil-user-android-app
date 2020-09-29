@@ -96,7 +96,6 @@ const mapStateToProps = (state) => {
     return {
         location: state.locationReducer.location,
         userLocation: state.userLocationReducer.userLocation
-
     }
 }
 

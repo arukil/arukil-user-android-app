@@ -1,12 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, ScrollView, StyleSheet, Text, Dimensions, Image, ActivityIndicator, View } from 'react-native';
+import { TouchableOpacity, ScrollView, Text, Image, ActivityIndicator, View } from 'react-native';
 import Swiper from 'react-native-swiper'
-import axios from 'axios'
 import { offerImage, item } from './data'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-const SCREEN_WIDTH = (Dimensions.get('window').width - 20) / 3.5;
-const SCREEN_HEIGHT = (Dimensions.get('window').height / 5.8);
+import styles from '../style/index';
 
 function Grocery(props) {
 
@@ -16,14 +13,13 @@ function Grocery(props) {
         setIsLoading(false);
     }, [])
 
+
     return (
         !isLoading ?
             <ScrollView style={styles.container}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={{
-                    flexDirection: 'row', alignItems: 'center',  justifyContent:'space-between' , height:60, width:'74%'
-                }}>
+                <View style={styles.notify}>
                     <MaterialCommunityIcons name='moped' size={28} color={'#e91'} />
                     <Text style={{ fontSize: 16, color: '#999' }}>Delivery timing: 9 Am to 7 Pm </Text>
                 </View>
@@ -53,7 +49,7 @@ function Grocery(props) {
                 <View style={styles.body}>{
                     item.map((res, index) =>
                         <TouchableOpacity activeOpacity={0.7} style={[styles.card, { marginLeft: (index % 3) === 0 ? 0 : 15 }]} onPress={() =>
-                            props.navigation.navigate(res.route, {
+                            props.navigation.navigate('ListView', {
                                 item: res
                             })
                         } key={res.name}>
@@ -69,79 +65,6 @@ function Grocery(props) {
     );
 }
 
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    sliderContainer: {
-        width: '100%',
-        height: 148,
-        justifyContent: 'center',
-        alignSelf: 'center',
-    },
-    slide: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
-        borderRadius: 5,
-    },
-    sliderImage: {
-        height: '100%',
-        width: '100%',
-        alignSelf: 'center',
-        borderRadius: 5,
-    },
-    loader: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: '#ffffff',
-    },
-    title: {
-        marginTop: 6,
-        padding: 10,
-    },
-    primaryTitle: {
-        color: '#4f4f4f',
-        fontSize: 17,
-        fontWeight: '700'
-    },
-    secondaryTitle: {
-        color: '#999',
-        fontSize: 12
-    },
-    body: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    card: {
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-        justifyContent: 'space-around',
-        backgroundColor: '#fafdff',
-        borderColor: '#c7ebfc',
-        alignItems: 'center',
-        borderColor: '#ddd',
-        borderWidth: 0.4,
-        marginTop: 10,
-        borderRadius: 5,
-    },
-    image: {
-        height: '60%',
-        aspectRatio: 1
-    },
-    name: {
-        fontSize: 12,
-        textAlign: 'center',
-        color: '#646769',
-        fontWeight: '700'
-    },
-
-});
 
 export default Grocery;
 

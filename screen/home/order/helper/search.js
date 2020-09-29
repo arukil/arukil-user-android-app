@@ -8,6 +8,8 @@ function Search(props) {
 
     const [textInput, setTextInput] = React.useState('');
 
+    
+
     return (
         <SafeAreaView style={styles.container}>   
           <View style={styles.search} activeOpacity={0.7}>

@@ -12,7 +12,7 @@ export function bucket(state = initialBucketState, action) {
         item: [...state.item, action.data]
       }
     case 'UPDATE_TO_BUCKET':
-      const index = state.item.findIndex(en => en.image === action.data.image);
+      const index = state.item.findIndex(e => e.image === action.data.image);
       const newArray = [...state.item]
       newArray[index] = action.data;
       return {

@@ -1,20 +1,15 @@
-const initialStatePersonalcare = {
+const initialState = {
     item: [],
-    help:{}
 };
 
-export function personalcare(state = initialStatePersonalcare, action) {
+export function grocery(state = initialState, action) {
 
     switch (action.type) {
-        case 'ADD_PERSONALCARE':
+        case 'ADD_GROCERY':
             return {
-                item: action.data
+                item: [...state.item,action.data]
             };
-        case 'HELP_PERSONALCARE':
-            return {
-                help: action.data
-            };
-        case 'RESET_PERSONALCARE':
+        case 'RESET_GROCERY':
             return {
                 item: []
             }
