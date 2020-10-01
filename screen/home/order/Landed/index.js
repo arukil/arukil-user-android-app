@@ -8,6 +8,7 @@ import styles from './style';
 import { connect } from 'react-redux'
 import Grocery from '../grocery/component/index';
 import { Header } from 'react-native-elements'
+import Cart from '../helper/cart';
 
 
 const Index = (props) => {
@@ -16,12 +17,12 @@ const Index = (props) => {
         Object.keys(props.location).length > 0 && Object.keys(props.userLocation).length === 0 ?
             props.USER_CURRENT_LOCATION(props.location) : null;
     }, [props.location]);
-    
+
 
     const geocoder = async (latitude, longitude) => {
         await Geocoder.init(GoogleApiKey)
         await Geocoder.from(latitude, longitude)
-            .then(json => {  
+            .then(json => {
                 var addressComponent = json.results[0];
                 props.GET_LOCATION(addressComponent)
                 return;
@@ -50,7 +51,7 @@ const Index = (props) => {
             }
         }
         _getLocation();
-        
+
     }, []);
 
 
@@ -87,7 +88,7 @@ const Index = (props) => {
             <View style={styles.body}>
                 <Grocery navigation={props.navigation} />
             </View>
-
+            <Cart navigation={props.navigation} />
         </SafeAreaView>
     )
 }

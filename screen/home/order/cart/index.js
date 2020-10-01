@@ -1,44 +1,74 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList ,TouchableHighlight} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Counter from "react-native-counters";
-import _ from 'lodash'
+import RazorpayCheckout from 'react-native-razorpay';
 
-
+const INCREMENT = 'INCREMENT';
+const DECREMENT = 'DECREMENT';
 
 function Index(props) {
 
+    const [isLoading, setIsLoading] = React.useState(false)
 
     const selecterHandler = async (item, val, index) => {
 
-        let arr = props.bucket;
+        setIsLoading(false);
         let obj = props.bucket[index]
         if (val === 0) {
-            return props.REMOVE_FROM_BUCKET(obj)
+            props.REMOVE_FROM_BUCKET(index);
+            setIsLoading(true);
+            return;
+        }
+        else if (val < obj.quantity) {
+            obj = {
+                ...obj,
+                quantity: val,
+                totalPrice: obj.price * val,
+                netWeight: obj.calculate * val
+            }
+            props.UPDATE_TO_BUCKET({ obj, index, DECREMENT });
+            setIsLoading(true);
+            return;
         }
         else {
-            arr[index] = {
+            obj = {
                 ...obj,
                 quantity: val,
                 totalPrice: obj.price * val,
                 netWeight: item.calculate * val
             }
-            return props.UPDATE_TO_BUCKET(arr)
+            props.UPDATE_TO_BUCKET({ obj, index, INCREMENT });
+            setIsLoading(true);
+            return;
         }
     }
 
-    const renderItem = ({ item, index }) => {
-        const { name, image, flavour, price, weight, totalPrice, netWeight, quantity } = item;
 
+    React.useEffect(() => {
+        var grocery = [], vegetable = [], fruit = [];
+        for (let index = 0; index < props.bucket.length; index++) {
+            if (props.bucket[index].type === 'GROCERY') { grocery.push(props.bucket[index]) }
+            else if (props.bucket[index].type === 'VEGETABLE') { vegetable.push(props.bucket[index]) }
+            else { fruit.push(props.bucket[index]) }
+        }
+        grocery = [...grocery, ...vegetable, ...fruit]
+        props.IN_ORDER_BUCKET(grocery)
+        return setIsLoading(true);
+    }, [])
+
+
+    const renderItem = ({ item, index }) => {
+        const { name, image, flavour, weight, totalPrice, quantity, type } = item;
         return (
             <View style={styles.listView}>
-                <Image source={{ uri: image }} resizeMode='center' style={styles.image} />
+                <Image source={{ uri: image }} resizeMode='contain' style={styles.image} />
                 <View style={styles.listContent}>
                     {!flavour ?
                         <Text style={styles.listname} numberOfLines={2}>{name}{' ('}{weight + ')'}</Text>
                         :
-                        <Text style={{ color: '#4f4f4f' }} numberOfLines={1}>{flavour}</Text>
+                        <Text style={{ color: '#4f4f4f' }} numberOfLines={1}>{flavour}{' ('}{weight + ')'}</Text>
                     }
                     <View style={styles.subdiv}>
                         <Counter
@@ -57,45 +87,77 @@ function Index(props) {
         )
     };
 
-    
+    React.useEffect(() => {
+        props.bucket.length == 0 ? props.navigation.navigate('Index') : null;
+    }, [props.bucket])
 
     return (
-        <View style={styles.container}>
-            <View style={styles.body}>
-                <FlatList
-                    data={props.bucket}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
-                    initialNumToRender={4}
-                    maxToRenderPerBatch={3}
-                    removeClippedSubviews={false}
-                    showsVerticalScrollIndicator={false}
-                    key={props.bucket.length}
-                />
-            </View>
-
-            <View style={styles.footer}>
-                <View style={styles.location}>
-                    <View style={{ width: '80%' }}>
-                        <Text style={{ color: '#4f4f4f', fontWeight: '700', fontSize: 14 }}>
-                            <MaterialCommunityIcons name='checkbox-marked-circle' size={15} color={'green'} />Delivery Address</Text>
-                        <Text numberOfLines={1} style={{ fontSize: 12, color: '#4f4f4f' }} >{props.location.formatted_address}</Text>
-                    </View>
-                    <TouchableOpacity style={{ padding: 5 }} activeOpacity={0.7} onPress={() => props.navigation.navigate('GetLocation')}>
-                        <Text style={{ color: '#E91E63', textDecorationLine: 'underline' }}  >Change</Text>
-                    </TouchableOpacity>
-                  
+        isLoading ?
+            <View style={styles.container}>
+                <View style={styles.body}>
+                    <FlatList
+                        data={props.bucket}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => index.toString()}
+                        initialNumToRender={4}
+                        maxToRenderPerBatch={3}
+                        removeClippedSubviews={false}
+                        showsVerticalScrollIndicator={false}
+                        key={props.bucket.length}
+                    />
                 </View>
-                <TouchableOpacity style={styles.paybtn} activeOpacity={0.9} >
-                    <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }} >
-                        <Text>Pay</Text>
-                        <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />
-                        <Text>{props.twp.totalPrice}</Text>
-                    </Text>
-                </TouchableOpacity>
-                
+
+                <View style={styles.footer}>
+                    <View style={styles.location}>
+                        <View style={{ width: '80%' }}>
+                            <Text style={{ color: '#4f4f4f', fontWeight: '700', fontSize: 14 }}>
+                                <MaterialCommunityIcons name='checkbox-marked-circle' size={15} color={'green'} />Delivery Address</Text>
+                            <Text numberOfLines={1} style={{ fontSize: 12, color: '#4f4f4f' }} >{props.location.formatted_address}</Text>
+                        </View>
+                        <TouchableOpacity style={{ padding: 5 }} activeOpacity={0.7} onPress={() => props.navigation.navigate('GetLocation')}>
+                            <Text style={{ color: '#E91E63', textDecorationLine: 'underline' }}  >Change</Text>
+                        </TouchableOpacity>
+
+                    </View>
+                    <TouchableOpacity style={styles.paybtn} activeOpacity={0.9}
+
+                        onPress={() => {
+                            var options = {
+                                description: '',
+                                image: 'https://i.imgur.com/3g7nmJC.png',
+                                currency: 'INR',
+                                key: 'rzp_test_24eqy0wZagxwur', // Your api key
+                                amount: props.tpw.totalPrice,
+                                name: 'Arukil',
+                                prefill: {
+                                    email: 'void@razorpay.com',
+                                    contact: '9191919191',
+                                    name: 'Razorpay Software'
+                                },
+                                theme: { color: '#F37254' }
+                            }
+                            RazorpayCheckout.open(options).then((data) => {
+                                // handle success
+                                console.log('k')
+                                alert(`Success: ${data.razorpay_payment_id}`);
+                            }).catch((error) => {
+                                // handle failure
+                                alert(`Error: ${error.code} | ${error.description}`);
+                            });
+
+                        }}    >
+                        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }} >
+                            <Text>Pay</Text>
+                            <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />
+                            <Text>{props.tpw.totalPrice}</Text>
+                        </Text>
+                    </TouchableOpacity>
+
+                </View>
             </View>
-        </View>
+            : <View style={styles.loader}>
+                <ActivityIndicator size="large" color="#e91e63" />
+            </View>
     )
 }
 
@@ -103,7 +165,7 @@ const mapStateToProps = (state) => {
     return {
         location: state.locationReducer.location,
         bucket: state.bucket.item,
-        twp: state.twp.pw
+        tpw: state.bucket.tpw
     }
 }
 
@@ -120,6 +182,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         REMOVE_FROM_BUCKET: (data) => {
             dispatch({ type: 'REMOVE_FROM_BUCKET', data })
+        },
+        IN_ORDER_BUCKET: (data) => {
+            dispatch({ type: 'IN_ORDER_BUCKET', data })
         }
     };
 }
@@ -131,6 +196,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fcfcfc'
+    },
+    loader: {
+        flex: 1,
+        backgroundColor: '#fcfcfc',
+        justifyContent: 'center'
     },
     footer: {
         flex: 0.22,

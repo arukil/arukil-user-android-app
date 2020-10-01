@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity} from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -9,7 +9,7 @@ import Search from '../order/helper/search';
 import GetLocation from '../region/component/getLocation';
 import Map from '../region/component/map';
 import Cart from '../order/cart/index';
-
+import FullView from '../order/grocery/component/fullView'
 const Stack = createStackNavigator();
 
 function StackNavigator() {
@@ -36,7 +36,16 @@ function StackNavigator() {
                 headerStyle: {
                     elevation: 0,
                 },
-              
+
+            }}
+            />
+
+            <Stack.Screen name='FullView' component={FullView} options={{
+                  headerShown: true,
+                  title: false,
+                  headerStyle: {
+                      elevation: 0,
+                  },
             }}
             />
 

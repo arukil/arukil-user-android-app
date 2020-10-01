@@ -1,35 +1,47 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import React from 'react'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import Counter from "react-native-counters";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
-import NumericInput from 'react-native-numeric-input'
 
+const INCREMENT = 'INCREMENT';
+const DECREMENT = 'DECREMENT';
 
 function CartAddBtn(props) {
 
     const [item] = React.useState(props.data);
 
-
     const selecterHandler = async (item, val, index) => {
-        let arr = props.bucket;
+
         if (index >= 0) {
             var obj = props.bucket[index];
             if (val === 0) {
-                return props.REMOVE_FROM_BUCKET(obj)
+                props.REMOVE_FROM_BUCKET(index)
+                return;
             }
-            else {
-                arr[index] = {
+            else if (val < obj.quantity) {
+                obj = {
                     ...obj,
                     quantity: val,
                     totalPrice: obj.price * val,
-                    netWeight: item.available[0].calculate * val
+                    netWeight: obj.calculate * val
                 }
-                return props.UPDATE_TO_BUCKET(arr)
+                props.UPDATE_TO_BUCKET({ obj, index, DECREMENT });
+                return;
+            }
+            else {
+                obj = {
+                    ...obj,
+                    quantity: val,
+                    totalPrice: obj.price * val,
+                    netWeight: obj.calculate * val
+                }
+                props.UPDATE_TO_BUCKET({ obj, index, INCREMENT });
+                return;
             }
         }
         else {
-            const insertToBucket = {
+            const insertToBucket = await {
                 name: item.name,
                 flavour: item.flavour,
                 image: item.image,
@@ -41,14 +53,15 @@ function CartAddBtn(props) {
                 type: item.type,
                 calculate: item.available[0].calculate
             }
-            await props.ADD_TO_BUCKET(insertToBucket);
+            props.ADD_TO_BUCKET(insertToBucket);
             return;
         }
+
     }
 
 
-    const button = () => {
 
+    const button = () => {
         const index = props.bucket.findIndex(({ image }) => image === item.image);
         if (index >= 0) {
             return (
@@ -57,7 +70,7 @@ function CartAddBtn(props) {
                     onChange={(val) => selecterHandler(item, val, index)}
                     start={1}
                     max={5}
-        
+
                 />
             )
         }
@@ -115,6 +128,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderColor: '#ddd',
         backgroundColor: '#ffffff',
+        
     },
 
 })

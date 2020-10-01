@@ -38,10 +38,8 @@ function ListView(props) {
 
 
         const _generateData = async () => {
-
             var obj = {};
-
-            const localData = await props.grocery.find(({ name }) => name === props.route.params.item.name)
+            const localData = await props.grocery.find(({ name }) => name === props.route.params.item.name);
 
             if (localData) {
                 return setState({
@@ -55,8 +53,8 @@ function ListView(props) {
                     .then(response => {
 
                         const res = response.data.data;
-                        Object.assign(obj, { name: props.route.params.item.name }, { res: res })
-                        props.ADD_GROCERY(obj)
+                        Object.assign(obj, { name: props.route.params.item.name }, { res: res });
+                        props.ADD_GROCERY(obj);
 
                         return setState({
                             isLoading: false,
@@ -65,7 +63,7 @@ function ListView(props) {
                         });
 
                     }).catch(error => {
-                        console.log(error)
+                        console.log(error);
                     })
             }
         }
@@ -78,8 +76,8 @@ function ListView(props) {
 
         const { name, available, image, flavour, type } = item;
         return (
-            <View style={styles.listView}>
-                <Image source={{ uri: image }} resizeMode='center' style={styles.image} />
+            <TouchableOpacity style={styles.listView} activeOpacity={0.8} onPress={() => props.navigation.navigate('FullView', {item})}>
+                <Image source={{ uri: image }} resizeMode='contain' style={styles.image} />
                 <View style={styles.listContent}>
                     {!flavour ?
                         <Text style={styles.listname} numberOfLines={1}>{name}</Text>
@@ -94,7 +92,7 @@ function ListView(props) {
                                 flavour: flavour ? flavour : '',
                                 image: image,
                                 available: available,
-                                type: type
+                                type: type,
                             }} />
                     </View>
                     <Text style={styles.price}>
@@ -102,7 +100,7 @@ function ListView(props) {
                         {available[0].price}
                     </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
 
         )
     };
@@ -118,7 +116,7 @@ function ListView(props) {
                                 state.list.map(({ name }, index) =>
                                     <TouchableOpacity activeOpacity={1} style={[styles.productListTitle,
                                     { backgroundColor: name === state.selectedProduct.name ? '#e4545f' : '#f9f9f9', marginLeft: index === 0 ? 0 : 10 }]}
-                                        onPress={() => setState({ ...state, selectedProduct: state.list[index] })}
+                                        onPress={() => name !== state.selectedProduct.name ? setState({ ...state, selectedProduct: state.list[index] }) : null}
                                         key={index} >
                                         <Text numberOfLines={2} style={{
                                             textAlign: 'center', fontSize: 12.5,
