@@ -19,6 +19,36 @@ function ListView(props) {
     });
 
 
+    const innerFunction = React.useCallback(
+        async () => {
+            var obj = {};
+            const localData = await props.grocery.find(({ name }) => name === props.route.params.item.name);
+            if (localData) {
+                return setState({
+                    isLoading: false,
+                    list: localData.res,
+                    selectedProduct: localData.res[0].list ? localData.res[0] : {},
+                });
+            }
+            else {
+                await axios.get(`https://arukil.herokuapp.com/api/products/${props.route.params.item.name}`)
+                    .then(response => {
+                        const res = response.data.data;
+                        Object.assign(obj, { name: props.route.params.item.name }, { res: res });
+                        props.ADD_GROCERY(obj);
+
+                        return setState({
+                            isLoading: false,
+                            list: res,
+                            selectedProduct: res[0].list ? res[0] : {},
+                        });
+
+                    }).catch(error => {
+                        console.log(error);
+                    })
+            }
+        }, []);
+
     React.useEffect(() => {
         props.navigation.setOptions({
             title: props.route.params.item.name,
@@ -35,40 +65,7 @@ function ListView(props) {
                 </TouchableOpacity>
             )
         });
-
-
-        const _generateData = async () => {
-            var obj = {};
-            const localData = await props.grocery.find(({ name }) => name === props.route.params.item.name);
-
-            if (localData) {
-                return setState({
-                    isLoading: false,
-                    list: localData.res,
-                    selectedProduct: localData.res[0].list ? localData.res[0] : {},
-                });
-            }
-            else {
-                await axios.get(`https://arukil.herokuapp.com/api/products/${props.route.params.item.name}`)
-                    .then(response => {
-
-                        const res = response.data.data;
-                        Object.assign(obj, { name: props.route.params.item.name }, { res: res });
-                        props.ADD_GROCERY(obj);
-
-                        return setState({
-                            isLoading: false,
-                            list: res,
-                            selectedProduct: res[0].list ? res[0] : {},
-                        });
-
-                    }).catch(error => {
-                        console.log(error);
-                    })
-            }
-        }
-        _generateData()
-
+        innerFunction();
     }, [])
 
 
@@ -76,8 +73,10 @@ function ListView(props) {
 
         const { name, available, image, flavour, type } = item;
         return (
-            <TouchableOpacity style={styles.listView} activeOpacity={0.8} onPress={() => props.navigation.navigate('FullView', {item})}>
-                <Image source={{ uri: image }} resizeMode='contain' style={styles.image} />
+            <View style={styles.listView}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => props.navigation.navigate('FullView', { item })}>
+                    <Image source={{ uri: image }} resizeMode='contain' style={styles.image} />
+                </TouchableOpacity>
                 <View style={styles.listContent}>
                     {!flavour ?
                         <Text style={styles.listname} numberOfLines={1}>{name}</Text>
@@ -100,7 +99,7 @@ function ListView(props) {
                         {available[0].price}
                     </Text>
                 </View>
-            </TouchableOpacity>
+            </View>
 
         )
     };

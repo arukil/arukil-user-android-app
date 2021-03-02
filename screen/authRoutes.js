@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from 'react-native';
+import { View, PermissionsAndroid, BackHandler, StyleSheet, Image } from 'react-native';
 import HomeRoutes from './home/routes/stackNavigator';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,63 +7,41 @@ import Signin from './signin/routes';
 import AsyncStorage from '@react-native-community/async-storage'
 import { AuthContext } from './authContext'
 import jwt_decode from 'jwt-decode';
-
+import { connect } from 'react-redux';
+import Geocoder from 'react-native-geocoding';
+import { GoogleApiKey } from './config';
+import Geolocation from 'react-native-geolocation-service';
 
 const Stack = createStackNavigator();
 
-export default function StackNavigator() {
+
+function AuthRoutes(props) {
 
     const [state, dispatch] = React.useReducer(
 
         (prevState, action) => {
             switch (action.type) {
-
                 case 'SIGN_IN':
                     return {
-                        ...prevState,
                         isUser: true,
                         isLoading: false,
-                        userToken: action.token,
                     };
                 case 'SIGN_OUT':
                     return {
-                        ...prevState,
                         isUser: false,
                         isLoading: false,
-                        userToken: null,
                     };
             }
         },
         {
             isLoading: true,
             isUser: false,
-            userToken: null,
         }
     );
 
-    const authContext = React.useMemo(
-        () => ({
-            signIn: async data => {
-                await AsyncStorage.setItem('token', data).then((token) => {
-                    dispatch({ type: 'SIGN_IN', token: token });
-                })
-            },
-            signOut: async () => {
-                try {
-                    await AsyncStorage.removeItem('token').then(() => {
-                        dispatch({ type: 'SIGN_OUT' })
-                    })
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-        }),
-        []
-    );
-
+  
 
     function isTokenExpired(token) {
-
         if (token !== null) {
             let decoded = jwt_decode(token)
             decoded = decoded.exp - 7200;
@@ -74,37 +52,96 @@ export default function StackNavigator() {
         }
     }
 
+    const geocoder = async (latitude, longitude) => {
+        await Geocoder.init(GoogleApiKey)
+        await Geocoder.from(latitude, longitude)
+            .then(json => {
+                var addressComponent = json.results[0];
+                props.GET_LOCATION(addressComponent)
+                return;
+            })
+            .catch(error => console.log(error));
+    }
+
 
     React.useEffect(() => {
 
-        const bootstrapAsync = async () => {
-            try {
-                let token = await AsyncStorage.getItem('token');
-                let checkTokenValidity = await isTokenExpired(token);
-                if (token !== null && checkTokenValidity !== null) {
+        const _checkValidations = async () => {
 
-                    return dispatch({ type: 'SIGN_IN', token: token });
+            const checkLocationPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            if (checkLocationPermission) {
+                try {
+                    let token = await AsyncStorage.getItem('token');
+                    let checkTokenValidity = await isTokenExpired(token);
+
+                    await Geolocation.getCurrentPosition((pos) => {
+                        return geocoder(pos.coords.latitude, pos.coords.longitude)
+                    },
+                        err => {
+                            alert("Fetching the Position failed, please check location is enable!");
+                        },
+                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 1000 }
+                    );
+
+                    if (token !== null && checkTokenValidity !== null) {
+                        return dispatch({ type: 'SIGN_IN' });
+                    }
+                    else {
+                        return dispatch({ type: 'SIGN_OUT' })
+                    }
                 }
-                else {
-                    return dispatch({ type: 'SIGN_OUT' })
+                catch (e) {
+                    console.log(e)
                 }
             }
-            catch (e) {
-                console.log(e)
+            else {
+                const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    return _checkValidations();
+                } else {
+                    BackHandler.exitApp()
+                }
             }
         }
-        bootstrapAsync();
-    }, [])
-    
+
+        setTimeout(() => {
+            _checkValidations();
+        }, 1500);
+
+    }, []);
+
+
+    const authContext = React.useMemo(
+        () => ({
+                signIn: async(data) => {
+                    await AsyncStorage.setItem('token', data).then((token) => {
+                        dispatch({ type: 'SIGN_IN', token: token });
+                    })
+                },
+                signOut: async () => {
+                    try {
+                        await AsyncStorage.removeItem('token').then(() => {
+                            dispatch({ type: 'SIGN_OUT' })
+                        })
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+            }),
+        []
+    );
+
 
     return (
         state.isLoading ?
-            <View style={{ flex: 1, backgroundColor: '#e91e63' }}></View>
+            <View style={styles.splashScreen}>
+                <Image source={require('./assets/image/Splash.jpg')} resizeMode={'contain'} style={styles.image} />
+            </View>
             :
             <AuthContext.Provider value={authContext}>
                 <NavigationContainer>
                     <Stack.Navigator screenOptions={{ headerShown: false }}>
-                        {!state.isUser && state.userToken === null ?
+                        {!state.isUser ?
                             (
                                 <Stack.Screen name='Signin' component={Signin} />
                             ) : (
@@ -118,7 +155,38 @@ export default function StackNavigator() {
 };
 
 
+const mapStateToProps = (state) => {
+    return {
+        location: state.locationReducer.location
+    }
+}
 
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        GET_LOCATION: (data) => {
+            dispatch({ type: 'GET_LOCATION', data })
+        },
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthRoutes)
+
+
+const styles = StyleSheet.create({
+
+    splashScreen: {
+        flex: 1,
+        backgroundColor: '#e91e63',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    image: {
+        width: '35%',
+        height: '25%'
+    }
+
+})
 
 
 

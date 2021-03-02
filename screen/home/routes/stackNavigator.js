@@ -1,19 +1,17 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import BottomTabNavigator from './bottomTabNavigator';
 import ListView from '../order/grocery/component/listView';
 import Search from '../order/helper/search';
 import GetLocation from '../region/component/getLocation';
 import Map from '../region/component/map';
+import Address from '../region/component/address'
 import Cart from '../order/cart/index';
 import FullView from '../order/grocery/component/fullView'
 const Stack = createStackNavigator();
 
 function StackNavigator() {
-
     return (
         <Stack.Navigator screenOptions={{
             headerShown: true,
@@ -28,6 +26,7 @@ function StackNavigator() {
 
             <Stack.Screen name="ListView" component={ListView} options={{
                 headerTransparent: false,
+                title: false,
                 headerTitleStyle: {
                     fontSize: 16,
                     fontWeight: '700',
@@ -41,11 +40,11 @@ function StackNavigator() {
             />
 
             <Stack.Screen name='FullView' component={FullView} options={{
-                  headerShown: true,
-                  title: false,
-                  headerStyle: {
-                      elevation: 0,
-                  },
+                headerShown: true,
+                title: false,
+                headerStyle: {
+                    elevation: 0,
+                },
             }}
             />
 
@@ -82,10 +81,15 @@ function StackNavigator() {
             />
             <Stack.Screen name="Map" component={Map} options={{
                 headerShown: true,
+                title: false,
                 headerTransparent: true,
-                title: false
             }}
             />
+            <Stack.Screen name="Address" component={Address} options={{
+                headerShown: false,
+            }}
+            />
+
         </Stack.Navigator>
     )
 };

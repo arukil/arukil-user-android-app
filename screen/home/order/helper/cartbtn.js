@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
-import Counter from "react-native-counters";
+import Counter from "./addbutton/components/counter";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux'
 
@@ -56,10 +56,7 @@ function CartAddBtn(props) {
             props.ADD_TO_BUCKET(insertToBucket);
             return;
         }
-
     }
-
-
 
     const button = () => {
         const index = props.bucket.findIndex(({ image }) => image === item.image);
@@ -68,9 +65,8 @@ function CartAddBtn(props) {
                 <Counter
                     min={0}
                     onChange={(val) => selecterHandler(item, val, index)}
-                    start={1}
+                    start={props.bucket[index].quantity}
                     max={5}
-
                 />
             )
         }
@@ -128,7 +124,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderColor: '#ddd',
         backgroundColor: '#ffffff',
-        
+
     },
 
 })

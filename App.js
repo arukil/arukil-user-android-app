@@ -11,9 +11,11 @@ import AuthRoutes from './screen/authRoutes';
 import { Provider } from 'react-redux';
 import store from './screen/home/redux/store/store';
 
-console.disableYellowBox=true;
+console.disableYellowBox = true;
+
 
 export default function App() {
+
   return (
     <Provider store={store}>
       <AuthRoutes />

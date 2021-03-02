@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {GoogleApiKey} from '../../../config';
+import { GoogleApiKey } from '../../../config';
 import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux'
@@ -77,6 +77,7 @@ function Location(props) {
                 <TextInput placeholder='search for your loctaion...' style={styles.InputField}
                     onChangeText={(text) => setAddress(text)}
                     value={address}
+                    autoFocus
                 />
                 {address.length > 0 ?
                     <TouchableOpacity activeOpacity={0.7} onPress={() => setAddress('')}>
@@ -104,7 +105,7 @@ function Location(props) {
 
 const mapStateToProps = (state) => {
     return {
-        userLocation: state.userLocationReducer.userLocation
+        userLocation: state.locationReducer.location
     }
 }
 

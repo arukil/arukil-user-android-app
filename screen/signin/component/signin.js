@@ -12,7 +12,7 @@ export default function Signin(props) {
                 <TouchableOpacity style={styles.phonenumberContainer} onPress={() => props.navigation.navigate('Phonenumber')} activeOpacity={0.7}>
                     <Image source={require('../../assets/image/flag.png')} style={{ width: 30, height: 25, borderRadius: 6 }} />
                     <Text style={{ fontSize: 20, color: '#292929' }}>+91</Text>
-                    <Text style={{ fontSize: 20, color: '#999' }}>Enter your mobile number</Text>
+                    <Text style={{ fontSize: 20, color: '#999'  }}>Enter your mobile number</Text>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.7}>
                     <Text style={{ color: '#999', fontSize: 12, textAlign: 'center' }}>Before moving , please read our
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         fontSize: 22,
-        color: '#292929',
+        color: '#4f4f4f',
     },
     phonenumberContainer: {
         padding: 5,

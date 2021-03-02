@@ -6,7 +6,8 @@ import CartBtn from '../../helper/cartbtn';
 import styles from '../style/fullView';
 
 export default function FullView(props) {
-    const [item] = React.useState(props.route.params.item)
+
+    const [item] = React.useState(props.route.params.item);
 
     React.useEffect(() => {
         props.navigation.setOptions({
@@ -14,6 +15,7 @@ export default function FullView(props) {
         });
     }, []);
 
+    
     return (
         <View style={styles.container}>
             <View style={styles.body}>

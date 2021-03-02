@@ -54,7 +54,7 @@ const phonenumberSignin = (props) => {
                     <Text style={styles.Title}>Please enter your mobile number</Text>
                     <TouchableOpacity style={styles.phonenumberContainer} onPress={() => props.navigation.navigate('Phonenumber')} activeOpacity={0.7}>
                         <Image source={require('../../assets/image/flag.png')} style={{ width: 35, height: 25, borderRadius: 4 }} />
-                        <Text style={{ fontSize: 20, color: '#292929' }}>+91</Text>
+                        <Text style={{ fontSize: 20, color: '#4f4f4f' }}>+91</Text>
                         <TextInput style={styles.input} onChangeText={(number) => setPhonenumber(number)} placeholder={'9876543210'} keyboardType={'phone-pad'} autoFocus />
                     </TouchableOpacity>
                 </View>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     Title: {
-        color: '#383232',
+        color: '#4f4f4f',
         fontSize: 20,
     },
     phonenumberContainer: {
@@ -101,9 +101,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     input: {
-        borderBottomWidth: 2,
-        width: '70%',
-        fontSize: 18
+        width: '72%',
+        fontSize: 18,
+        backgroundColor:'#f5f5f5',
+        borderRadius:5,
+        borderWidth:0.2,
+        borderColor:'#ddd'
     },
     footer: {
         height:100,

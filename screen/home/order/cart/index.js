@@ -2,15 +2,38 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Counter from "react-native-counters";
+import Counter from "../helper/addbutton/components/counter";
 import RazorpayCheckout from 'react-native-razorpay';
+import jwt_decode from 'jwt-decode';
+import AsyncStorage from '@react-native-community/async-storage'
 
 const INCREMENT = 'INCREMENT';
 const DECREMENT = 'DECREMENT';
 
 function Index(props) {
+    const [isLoading, setIsLoading] = React.useState(false);
 
-    const [isLoading, setIsLoading] = React.useState(false)
+    const [state, setState] = React.useState({
+        userId: '',
+        name: '',
+        phonenumber: '',
+    })
+
+    async function decoded() {
+        try {
+            let token = await AsyncStorage.getItem('token');
+            let decoded = jwt_decode(token);
+            setState({
+                userId: decoded.user._id,
+                name: decoded.user.username,
+                phonenumber: decoded.user.phonenumber
+            })
+            return;
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
 
     const selecterHandler = async (item, val, index) => {
 
@@ -46,18 +69,50 @@ function Index(props) {
     }
 
 
+    const funCallBack = React.useCallback(
+        () => {
+            var grocery = [], vegetable = [], fruit = [];
+            for (let index = 0; index < props.bucket.length; index++) {
+                if (props.bucket[index].type === 'GROCERY') { grocery.push(props.bucket[index]) }
+                else if (props.bucket[index].type === 'VEGETABLE') { vegetable.push(props.bucket[index]) }
+                else { fruit.push(props.bucket[index]) }
+            }
+            grocery = [...grocery, ...vegetable, ...fruit]
+            props.IN_ORDER_BUCKET(grocery);
+            decoded();
+            return setIsLoading(true);
+        }, [])
+
     React.useEffect(() => {
-        var grocery = [], vegetable = [], fruit = [];
-        for (let index = 0; index < props.bucket.length; index++) {
-            if (props.bucket[index].type === 'GROCERY') { grocery.push(props.bucket[index]) }
-            else if (props.bucket[index].type === 'VEGETABLE') { vegetable.push(props.bucket[index]) }
-            else { fruit.push(props.bucket[index]) }
-        }
-        grocery = [...grocery, ...vegetable, ...fruit]
-        props.IN_ORDER_BUCKET(grocery)
-        return setIsLoading(true);
+        funCallBack();
     }, [])
 
+
+    const paymentHandler = () => {
+        if (props.tpw.totalPrice < 99) {
+            return alert('please order minimum 99 rs.');
+        }
+        else {
+            var options = {
+                description: '',
+                image: 'https://arukil.s3.ap-south-1.amazonaws.com/offercard/arukil.png',
+                currency: 'INR',
+                key: 'rzp_test_24eqy0wZagxwur',
+                amount: props.tpw.totalPrice * 100,
+                name: 'Arukil',
+                prefill: {
+                    contact: state.phonenumber,
+                    name: state.name
+                },
+                theme: { color: '#ee5488' }
+            }
+            RazorpayCheckout.open(options).then((data) => {
+                alert(`Success: ${data.razorpay_payment_id}`);
+            }).catch((error) => {
+                alert('your payment is failed');
+            });
+        }
+    }
 
     const renderItem = ({ item, index }) => {
         const { name, image, flavour, weight, totalPrice, quantity, type } = item;
@@ -109,43 +164,17 @@ function Index(props) {
 
                 <View style={styles.footer}>
                     <View style={styles.location}>
-                        <View style={{ width: '80%' }}>
+                        <View style={{ width: '95%' }}>
                             <Text style={{ color: '#4f4f4f', fontWeight: '700', fontSize: 14 }}>
                                 <MaterialCommunityIcons name='checkbox-marked-circle' size={15} color={'green'} />Delivery Address</Text>
                             <Text numberOfLines={1} style={{ fontSize: 12, color: '#4f4f4f' }} >{props.location.formatted_address}</Text>
                         </View>
-                        <TouchableOpacity style={{ padding: 5 }} activeOpacity={0.7} onPress={() => props.navigation.navigate('GetLocation')}>
+                        {/* <TouchableOpacity style={{ padding: 5 }} activeOpacity={0.7} onPress={() => props.navigation.navigate('GetLocation')}>
                             <Text style={{ color: '#E91E63', textDecorationLine: 'underline' }}  >Change</Text>
-                        </TouchableOpacity>
-
+                        </TouchableOpacity> */}
                     </View>
                     <TouchableOpacity style={styles.paybtn} activeOpacity={0.9}
-
-                        onPress={() => {
-                            var options = {
-                                description: '',
-                                image: 'https://i.imgur.com/3g7nmJC.png',
-                                currency: 'INR',
-                                key: 'rzp_test_24eqy0wZagxwur', // Your api key
-                                amount: props.tpw.totalPrice,
-                                name: 'Arukil',
-                                prefill: {
-                                    email: 'void@razorpay.com',
-                                    contact: '9191919191',
-                                    name: 'Razorpay Software'
-                                },
-                                theme: { color: '#F37254' }
-                            }
-                            RazorpayCheckout.open(options).then((data) => {
-                                // handle success
-                                console.log('k')
-                                alert(`Success: ${data.razorpay_payment_id}`);
-                            }).catch((error) => {
-                                // handle failure
-                                alert(`Error: ${error.code} | ${error.description}`);
-                            });
-
-                        }}    >
+                        onPress={() => paymentHandler()}    >
                         <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }} >
                             <Text>Pay</Text>
                             <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />

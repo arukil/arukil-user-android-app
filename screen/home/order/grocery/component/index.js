@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, ScrollView, Text, Image, ActivityIndicator, View  } from 'react-native';
+import { TouchableOpacity, ScrollView, Text, Image, ActivityIndicator, View } from 'react-native';
 import Swiper from 'react-native-swiper'
 import { offerImage, item } from './data'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,7 +12,6 @@ function Grocery(props) {
     React.useEffect(() => {
         setIsLoading(false);
     }, [])
-
 
     return (
         !isLoading ?
@@ -65,8 +64,7 @@ function Grocery(props) {
     );
 }
 
-
-export default Grocery;
+export default React.memo(Grocery);
 
 
 

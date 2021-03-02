@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     image: {
-        width: '25%',
-        height: '55%',
+        width: '40%',
+        height: '75%',
         borderRadius: 5,
         aspectRatio: 1,
 

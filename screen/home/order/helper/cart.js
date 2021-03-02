@@ -5,14 +5,12 @@ import { connect } from 'react-redux';
 
 function AddCartContainer(props) {
 
-
     return (
-
         props.bucket.length > 0 ?
             <TouchableOpacity style={styles.cart} animation={'fadeInUp'} activeOpacity={0.9}
                 onPress={() => props.navigation.navigate('Cart')} >
                 <Text style={{ color: '#fff', fontWeight: '700' }}>{props.bucket.length} item |
-                <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />{props.tpw.totalPrice + ' | ' + props.tpw.totalWeight + ' Kg'}
+                    <MaterialCommunityIcons name='currency-inr' size={15} color={'#fff'} />{props.tpw.totalPrice + ' | ' + props.tpw.totalWeight + ' Kg'}
                 </Text>
                 <View style={styles.rightcart} >
                     <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>View Cart </Text>
@@ -40,15 +38,19 @@ const mapDispatchToProps = (dispatch) => {
         BUCKET_RESET: () => {
             dispatch({ type: 'BUCKET_RESET' })
         },
-        TOTAL_WEIGHT_PRICE: (data) => {
-            dispatch({ type: 'TOTAL_WEIGHT_PRICE', data })
-        },
+
 
     };
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddCartContainer)
+const renderOrNot = (preProps, nextProps) => {
+    return preProps.tpw.totalWeight === nextProps.tpw.totalWeight
+        && preProps.tpw.totalPrice === nextProps.tpw.totalPrice;
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(AddCartContainer, renderOrNot))
 
 const styles = StyleSheet.create({
     cart: {

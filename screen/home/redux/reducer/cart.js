@@ -10,7 +10,6 @@ const initialBucketState = {
 }
 
 export function bucket(state = initialBucketState, action) {
-
   var newArray = [], tp = 0, tw = 0;
   switch (action.type) {
     case 'ADD_TO_BUCKET':
@@ -46,7 +45,7 @@ export function bucket(state = initialBucketState, action) {
       return state;
 
     case 'REMOVE_FROM_BUCKET':
-      tp = state.tpw.totalPrice - state.item[action.data].totalPrice;
+      tp = state.tpw.totalPrice  - state.item[action.data].totalPrice;
       tw = state.tpw.totalWeight - state.item[action.data].netWeight;
       var value = Number(Math.round(tw + 'e2') + 'e-2');
       state = {
@@ -70,22 +69,6 @@ export function bucket(state = initialBucketState, action) {
         item: []
       };
 
-    default:
-      return state;
-  }
-}
-
-
-const initialTotalPWState = {
-  pw: {}
-}
-
-export function twp(state = initialTotalPWState, action) {
-  switch (action.type) {
-    case 'TOTAL_WEIGHT_PRICE':
-      return {
-        pw: action.data
-      }
     default:
       return state;
   }
